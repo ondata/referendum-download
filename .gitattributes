@@ -1,0 +1,8 @@
+# Normalizza fine riga
+* text=auto eol=lf
+*.py text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.jsonl text eol=lf
+*.json text eol=lf
+*.sh text eol=lf

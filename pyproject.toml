@@ -1,0 +1,14 @@
+[project]
+name = "referendum-download"
+version = "0.1.0"
+description = "CLI per scaricare i dati dei referendum italiani da eleapi.interno.gov.it in formato JSONLines"
+requires-python = ">=3.9"
+dependencies = [
+    "requests>=2.28",
+]
+
+[tool.setuptools]
+py-modules = ["referendum_download"]
+
+[project.scripts]
+referendum-download = "referendum_download:main"
