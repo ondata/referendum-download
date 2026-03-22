@@ -1,5 +1,27 @@
 # LOG
 
+## 2026-03-22 (aggiornamento pomeriggio)
+
+- Scoperto endpoint per affluenza **comunale**: `votantiFI/DE/{data}/TE/09/SK/01/PR/{cod_prov}`
+  - Una chiamata per provincia (110 totali) → tutti i comuni con rilevazioni 12:00/19:00/23:00/finale
+  - Struttura: `enti.ente_p` = dati provincia, `enti.enti_f` = array comuni con `tipo="COMUNE"` e `com_vot`
+  - `cod_eligendo` comune = `cod_reg(2) + cod_prov(3) + f"{cod:04d}"` → compatibile con lookup table
+- Prodotta `data/20260322/affluenza.csv`: 7895 comuni × 4 rilevazioni = 31580 righe comunali
+  - Colonne: `livello`, `cod_eligendo`, `cod_reg`, `cod_prov`, `denominazione`, `elettori_t`, `rilevazione`, `ora`, `dt_rilevazione`, `sezioni_perv`, `sezioni_tot`, `votanti_t`, `perc_vot`
+  - Livelli presenti: nazionale, regione, provincia, comune
+- Aggiornato CLI `referendum_download.py`: step 5 scarica automaticamente l'affluenza dopo scrutini
+
+## 2026-03-22
+
+- Testato CLI sul referendum del giorno (20260322): API attiva, affluenza a zero come atteso
+- Codici Eligendo ≠ ISTAT: struttura interna `RRPPPCCCC` (9 cifre), regione coincide (01-20) ma prov/comune diversi
+- Costruita lookup table `data/lookup_eligendo_istat.csv` (7895 comuni, copertura 100%)
+  - Metodo: fuzzy join con `tometo_tomato` su nome regione + nome comune
+  - Input Eligendo: `data/20260322/enti.jsonl`
+  - Fonte ISTAT: `https://situas-servizi.istat.it/publish/reportspooljson?pfun=61&pdata=01/01/2048`
+  - Score min 91 (bilingui Alto Adige/Valle d'Aosta), 7733/7895 con score 100
+  - Colonne output: `cod_eligendo`, `nome_eligendo`, `nome_istat`, `regione`, `cod_istat`, `belfiore`, `avg_score`
+
 ## 2026-03-14
 
 - Creato PRD in `docs/PRD.md`
