@@ -219,11 +219,25 @@ Stessa struttura di scrutiniFI, per le circoscrizioni estero. Campi votanti legg
 
 ### 5. votantiFI - Dati affluenza
 
+**Livello nazionale + regionale:**
+
 ```
 GET /siel/PX/votantiFI/DE/{data}/TE/09/SK/{codice_scheda}
 ```
 
-Restituisce dati affluenza dettagliati per una specifica scheda.
+**Livello provinciale + comunale:**
+
+```
+GET /siel/PX/votantiFI/DE/{data}/TE/09/SK/{codice_scheda}/PR/{codice_provincia}
+```
+
+Restituisce dati affluenza con rilevazioni intermedie (12:00, 19:00, 23:00, finale).
+
+**Risposta:** struttura `enti.ente_p` (livello aggregato) + `enti.enti_f` (sottolivelli).
+Ogni entità ha `com_vot` — array di 4 rilevazioni con `dt_com`, `perc`, `vot_t`, `enti_p/enti_t`.
+
+Con `/PR/{cod}` l'`enti_f` contiene i **comuni** della provincia con `tipo="COMUNE"` e `cod` numerico
+(4 cifre, da ricostruire come `cod_reg + cod_prov + f"{cod:04d}"` per ottenere il cod_eligendo a 9 cifre).
 
 ## Date referendum disponibili (confermate API)
 
