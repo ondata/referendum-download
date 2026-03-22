@@ -43,7 +43,7 @@ Un join esatto fallisce su questi casi. Un join fuzzy li gestisce tutti con scor
 
 ### tometo_tomato
 
-[`tometo_tomato`](https://pypi.org/project/tometo_tomato/) è uno strumento di **fuzzy join** basato su DuckDB. Confronta stringhe con algoritmi di similarità (es. `token_set_ratio`) e produce:
+[`tometo_tomato`](https://github.com/aborruso/tometo_tomato) è uno strumento di **fuzzy join** basato su DuckDB. Confronta stringhe con algoritmi di similarità (es. `token_set_ratio`) e produce:
 
 - un file **matched**: record con un solo match sopra la soglia
 - un file **ambiguous**: record con più candidati simili (da verificare)
@@ -87,7 +87,7 @@ bash generate_lookup.sh
 ### Dipendenze
 
 ```bash
-pip install tometo_tomato
+pip install tometo_tomato   # https://github.com/aborruso/tometo_tomato
 # duckdb, curl, python3 già presenti nel sistema
 ```
 

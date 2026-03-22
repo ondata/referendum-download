@@ -151,7 +151,7 @@ Lo script `lookup/generate_lookup.sh` esegue questi passi:
    - converte trattini in spazi (`GIARDINI-NAXOS` → `GIARDINI NAXOS`)
    - usa `COMUNE_IT` ISTAT (nome solo italiano, senza minoranze linguistiche)
    - usa solo la parte italiana del nome Eligendo per i comuni bilingui (prima del `/`)
-4. **Fuzzy join** con [tometo_tomato](https://github.com/aborruso/tometo_tomato) su `(regione, comune)`:
+4. **Fuzzy join** con [`tometo_tomato`](https://github.com/aborruso/tometo_tomato) su `(regione, comune)`:
    - `--block-prefix 2` limita i confronti a comuni con stesso prefisso a 2 caratteri nella stessa regione
    - `--latinize` normalizza gli accenti prima del confronto
    - threshold default (85/100)
