@@ -70,6 +70,7 @@ I file vengono salvati in `data/{YYYYMMDD}/`:
 | `enti.jsonl` | Lista completa delle entità territoriali (regioni, province, comuni) |
 | `scrutini.jsonl` | Dati raw degli scrutini (un record JSON per comune + estero) |
 | `scrutini_flat.jsonl` | Dati appiattiti: una riga per comune per quesito referendario |
+| `scrutini_flat.csv` | Stesso contenuto di `scrutini_flat.jsonl` in formato CSV |
 | `affluenza.csv` | Affluenza per comune alle 4 rilevazioni (12:00, 19:00, 23:00, finale) |
 
 ### Struttura `scrutini_flat.jsonl`

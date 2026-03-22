@@ -1,5 +1,12 @@
 # LOG
 
+## 2026-03-22
+
+- Export `scrutini_flat.csv` generato automaticamente dopo `scrutini_flat.jsonl`
+- Aggiunta funzione `jsonl_to_csv` riutilizzabile
+- README aggiornato con nuovo file di output e struttura cartella `data`
+- Aggiunta licenza CC BY 4.0 (`LICENSE.md`)
+
 ## 2026-03-22 (parallelismo scrutini)
 
 - Scrutini comunali ora scaricati in parallelo con `concurrent.futures.ThreadPoolExecutor`

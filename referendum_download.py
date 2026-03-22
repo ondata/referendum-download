@@ -238,6 +238,23 @@ def flatten_record(record):
     return rows
 
 
+def jsonl_to_csv(jsonl_file, csv_file):
+    """Converte un file JSONL in CSV, inferendo i campi dalla prima riga."""
+    import csv
+    with open(jsonl_file) as fin:
+        first_line = fin.readline()
+        if not first_line:
+            return 0
+        fields = list(json.loads(first_line).keys())
+        fin.seek(0)
+        rows = [json.loads(line) for line in fin]
+    with open(csv_file, "w", newline="") as fout:
+        writer = csv.DictWriter(fout, fieldnames=fields, lineterminator="\n", extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(rows)
+    return len(rows)
+
+
 def export_flat(scrutini_file, flat_file):
     """Legge scrutini.jsonl e produce scrutini_flat.jsonl (una riga per comune per quesito)."""
     # Carica lookup Eligendo → ISTAT
@@ -410,6 +427,11 @@ def main():
             print("Genero export flat...")
             flat_count = export_flat(out_file, flat_file)
             print(f"  {flat_count} righe scritte in {flat_file}")
+
+            # Export flat CSV
+            flat_csv = os.path.join(out_dir, "scrutini_flat.csv")
+            jsonl_to_csv(flat_file, flat_csv)
+            print(f"  {flat_count} righe scritte in {flat_csv}")
 
     # 4. Affluenza comunale (votantiFI per provincia)
     if not args.solo_scrutini:
