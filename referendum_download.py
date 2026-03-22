@@ -62,6 +62,115 @@ def get_scrutini_estero(data_elez, session):
     return api_get(f"scrutiniFE/DE/{data_elez}/TE/09", session)
 
 
+def get_votanti(data_elez, session):
+    """Scarica affluenza nazionale + regionale."""
+    return api_get(f"votantiFI/DE/{data_elez}/TE/09/SK/01", session)
+
+
+def get_votanti_provincia(data_elez, cod_prov, session):
+    """Scarica affluenza comunale per una provincia (cod_prov = 3 cifre Eligendo)."""
+    return api_get(f"votantiFI/DE/{data_elez}/TE/09/SK/01/PR/{cod_prov}", session)
+
+
+def export_affluenza(data_elez, province, session, out_file, delay=0.5):
+    """Salva affluenza.csv con righe per ogni livello (nazionale, regione, comune).
+
+    province: lista di dict con 'cod' (9 cifre Eligendo) e 'desc' per ogni provincia.
+    """
+    import csv
+
+    TIME_LABEL = {1: "12:00", 2: "19:00", 3: "23:00", 4: "finale"}
+    FIELDS = [
+        "livello", "cod_eligendo", "cod_istat", "cod_reg", "cod_prov",
+        "denominazione", "elettori_t",
+        "rilevazione", "ora", "dt_rilevazione",
+        "sezioni_perv", "sezioni_tot", "votanti_t", "perc_vot",
+    ]
+
+    # Carica lookup Eligendo → ISTAT (opzionale: se il file non esiste va avanti senza)
+    lookup = {}
+    lookup_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lookup", "lookup_eligendo_istat.csv")
+    if os.path.exists(lookup_file):
+        import csv as _csv
+        with open(lookup_file) as lf:
+            for row in _csv.DictReader(lf):
+                lookup[row["cod_eligendo"]] = row["cod_istat"]
+
+    def make_rows(level, cod_eligendo, cod_reg, cod_prov, desc, ele_t, com_vot):
+        rows = []
+        if not com_vot:
+            return rows
+        cod_istat = lookup.get(cod_eligendo, "")
+        for cv in com_vot:
+            com_idx = cv.get("com")
+            rows.append({
+                "livello": level,
+                "cod_eligendo": cod_eligendo,
+                "cod_istat": cod_istat,
+                "cod_reg": cod_reg,
+                "cod_prov": cod_prov,
+                "denominazione": desc,
+                "elettori_t": ele_t,
+                "rilevazione": com_idx,
+                "ora": TIME_LABEL.get(com_idx, str(com_idx)),
+                "dt_rilevazione": str(cv.get("dt_com", "")),
+                "sezioni_perv": cv.get("enti_p", 0),
+                "sezioni_tot": cv.get("enti_t", 0),
+                "votanti_t": cv.get("vot_t", 0),
+                "perc_vot": cv.get("perc", ""),
+            })
+        return rows
+
+    all_rows = []
+
+    # 1. Nazionale + regionale
+    try:
+        d = get_votanti(data_elez, session)
+        enti = d["enti"]
+        ep = enti["ente_p"]
+        all_rows += make_rows("nazionale", "", "", "", ep["desc"], ep["ele_t"], ep.get("com_vot"))
+        for r in enti.get("enti_f", []):
+            cod_reg = f"{r['cod']:02d}"
+            all_rows += make_rows("regione", f"{r['cod']:02d}0000000", cod_reg, "", r["desc"], r["ele_t"], r.get("com_vot"))
+    except RuntimeError as e:
+        print(f"  AVVISO votanti nazionale: {e}", file=sys.stderr)
+
+    # 2. Per ogni provincia → dati comunali
+    print(f"  Scarico affluenza per {len(province)} province...")
+    for i, prov in enumerate(province):
+        cod_prov_full = prov["cod"]   # es. "010020000"
+        cod_reg = cod_prov_full[0:2]  # es. "01"
+        cod_prov = cod_prov_full[2:5] # es. "002"
+        try:
+            dp = get_votanti_provincia(data_elez, cod_prov, session)
+            enti_p = dp["enti"]
+            # Provincia
+            prov_cod_eligendo = f"{cod_reg}{cod_prov}0000"
+            ep = enti_p["ente_p"]
+            all_rows += make_rows("provincia", prov_cod_eligendo, cod_reg, cod_prov, ep["desc"], ep["ele_t"], ep.get("com_vot"))
+            # Comuni
+            for com in enti_p.get("enti_f", []):
+                cod_com = f"{int(com['cod']):04d}"
+                cod_eligendo = f"{cod_reg}{cod_prov}{cod_com}"
+                all_rows += make_rows("comune", cod_eligendo, cod_reg, cod_prov, com["desc"], com["ele_t"], com.get("com_vot"))
+        except RuntimeError as e:
+            print(f"  AVVISO {prov['desc']} ({cod_prov}): {e}", file=sys.stderr)
+
+        if (i + 1) % 20 == 0:
+            print(f"  [{i + 1}/{len(province)}] {prov['desc']}")
+        if delay > 0 and i < len(province) - 1:
+            time.sleep(delay)
+
+    if not all_rows:
+        return 0
+
+    with open(out_file, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(all_rows)
+    return len(all_rows)
+
+
 def decode_cod(cod):
     """Decodifica il codice entità a 9 cifre in reg, prov, com."""
     # cod = "RRPPPCCCC"
@@ -130,11 +239,21 @@ def flatten_record(record):
 
 def export_flat(scrutini_file, flat_file):
     """Legge scrutini.jsonl e produce scrutini_flat.jsonl (una riga per comune per quesito)."""
+    # Carica lookup Eligendo → ISTAT
+    lookup = {}
+    lookup_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lookup", "lookup_eligendo_istat.csv")
+    if os.path.exists(lookup_file):
+        import csv
+        with open(lookup_file) as lf:
+            for row in csv.DictReader(lf):
+                lookup[row["cod_eligendo"]] = row["cod_istat"]
+
     count = 0
     with open(scrutini_file) as fin, open(flat_file, "w") as fout:
         for line in fin:
             record = json.loads(line)
             for row in flatten_record(record):
+                row["cod_istat"] = lookup.get(row.get("cod", ""), "")
                 fout.write(json.dumps(row, ensure_ascii=False) + "\n")
                 count += 1
     return count
@@ -165,97 +284,117 @@ def main():
         default=0,
         help="Limita il numero di comuni da scaricare (0 = tutti, utile per test)",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Forza il re-download anche se i file esistono già",
+    )
+    parser.add_argument(
+        "--solo-scrutini",
+        action="store_true",
+        help="Scarica solo gli scrutini (salta affluenza)",
+    )
+    parser.add_argument(
+        "--solo-affluenza",
+        action="store_true",
+        help="Scarica solo l'affluenza (salta scrutini)",
+    )
     args = parser.parse_args()
 
     data_elez = parse_url(args.url)
     out_dir = os.path.join(args.output_dir, data_elez)
-    out_file = os.path.join(out_dir, "scrutini.jsonl")
-
-    # Idempotenza: se il file esiste e contiene dati, non riscarica
-    if os.path.exists(out_file) and os.path.getsize(out_file) > 0:
-        print(f"File già esistente: {out_file} — skip (cancellalo per riscaricare)")
-        sys.exit(0)
-
     os.makedirs(out_dir, exist_ok=True)
     session = requests.Session()
 
-    # 1. Scarica entità Italia
-    print(f"Scarico entità per data {data_elez}...")
-    enti_data = get_enti(data_elez, session)
+    # 1. Entità Italia (skip se già presente, salvo --force)
+    enti_file = os.path.join(out_dir, "enti.jsonl")
+    if not args.force and os.path.exists(enti_file) and os.path.getsize(enti_file) > 0:
+        print(f"Entità già presenti: {enti_file} — skip")
+        enti_data = {"enti": []}
+        with open(enti_file) as f:
+            for line in f:
+                enti_data["enti"].append(json.loads(line))
+    else:
+        print(f"Scarico entità per data {data_elez}...")
+        enti_data = get_enti(data_elez, session)
+        with open(enti_file, "w") as f:
+            for e in enti_data["enti"]:
+                f.write(json.dumps(e, ensure_ascii=False) + "\n")
+        print(f"  Entità salvate in {enti_file}")
+
     comuni = [e for e in enti_data["enti"] if e["tipo"] == "CM"]
-    print(f"  Trovati {len(comuni)} comuni")
+    print(f"  {len(comuni)} comuni")
 
     if args.limit > 0:
         comuni = comuni[: args.limit]
         print(f"  Limitato a {len(comuni)} comuni (--limit)")
 
-    # Salva enti come file di riferimento
-    enti_file = os.path.join(out_dir, "enti.jsonl")
-    with open(enti_file, "w") as f:
-        for e in enti_data["enti"]:
-            f.write(json.dumps(e, ensure_ascii=False) + "\n")
-    print(f"  Entità salvate in {enti_file}")
+    # 2+3. Scrutini per comune + estero
+    if not args.solo_affluenza:
+        out_file = os.path.join(out_dir, "scrutini.jsonl")
+        if not args.force and os.path.exists(out_file) and os.path.getsize(out_file) > 0:
+            print(f"Scrutini già presenti: {out_file} — skip (usa --force per riscaricare)")
+        else:
+            written = 0
+            errors = 0
+            with open(out_file, "w") as f:
+                for i, comune in enumerate(comuni):
+                    cod = comune["cod"]
+                    cod_reg, cod_prov, cod_com = decode_cod(cod)
+                    desc = comune["desc"]
+                    try:
+                        data = get_scrutini_comune(data_elez, cod_reg, cod_prov, cod_com, session)
+                        record = {
+                            "livello": "comune",
+                            "area": "italia",
+                            "cod": cod,
+                            "cod_reg": cod_reg,
+                            "cod_prov": cod_prov,
+                            "cod_com": cod_com,
+                            "data": data,
+                        }
+                        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                        written += 1
+                    except Exception as e:
+                        print(f"  ERRORE {desc} ({cod}): {e}", file=sys.stderr)
+                        errors += 1
+                    if (i + 1) % 50 == 0 or (i + 1) == len(comuni):
+                        print(f"  [{i + 1}/{len(comuni)}] {desc}")
+                    if args.delay > 0 and i < len(comuni) - 1:
+                        time.sleep(args.delay)
 
-    # 2. Scarica scrutini per ogni comune
-    written = 0
-    errors = 0
-    with open(out_file, "w") as f:
-        for i, comune in enumerate(comuni):
-            cod = comune["cod"]
-            cod_reg, cod_prov, cod_com = decode_cod(cod)
-            desc = comune["desc"]
+                # Estero
+                print("Scarico scrutini estero...")
+                try:
+                    data_estero = get_scrutini_estero(data_elez, session)
+                    record = {"livello": "nazionale", "area": "estero", "cod": "estero", "data": data_estero}
+                    f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                    written += 1
+                    print("  Estero OK")
+                except Exception as e:
+                    print(f"  ERRORE estero: {e}", file=sys.stderr)
+                    errors += 1
 
-            try:
-                data = get_scrutini_comune(data_elez, cod_reg, cod_prov, cod_com, session)
-                # Aggiungi metadati
-                record = {
-                    "livello": "comune",
-                    "area": "italia",
-                    "cod": cod,
-                    "cod_reg": cod_reg,
-                    "cod_prov": cod_prov,
-                    "cod_com": cod_com,
-                    "data": data,
-                }
-                f.write(json.dumps(record, ensure_ascii=False) + "\n")
-                written += 1
-            except Exception as e:
-                print(f"  ERRORE {desc} ({cod}): {e}", file=sys.stderr)
-                errors += 1
+            print(f"\nCompletato: {written} record scritti in {out_file}")
+            if errors:
+                print(f"Errori: {errors}")
 
-            # Progresso
-            if (i + 1) % 50 == 0 or (i + 1) == len(comuni):
-                print(f"  [{i + 1}/{len(comuni)}] {desc}")
+            # Export flat
+            flat_file = os.path.join(out_dir, "scrutini_flat.jsonl")
+            print("Genero export flat...")
+            flat_count = export_flat(out_file, flat_file)
+            print(f"  {flat_count} righe scritte in {flat_file}")
 
-            if args.delay > 0 and i < len(comuni) - 1:
-                time.sleep(args.delay)
-
-        # 3. Scarica scrutini estero
-        print("Scarico scrutini estero...")
-        try:
-            data_estero = get_scrutini_estero(data_elez, session)
-            record = {
-                "livello": "nazionale",
-                "area": "estero",
-                "cod": "estero",
-                "data": data_estero,
-            }
-            f.write(json.dumps(record, ensure_ascii=False) + "\n")
-            written += 1
-            print("  Estero OK")
-        except Exception as e:
-            print(f"  ERRORE estero: {e}", file=sys.stderr)
-            errors += 1
-
-    print(f"\nCompletato: {written} record scritti in {out_file}")
-    if errors:
-        print(f"Errori: {errors}")
-
-    # 4. Export flat (una riga per comune per quesito)
-    flat_file = os.path.join(out_dir, "scrutini_flat.jsonl")
-    print(f"Genero export flat...")
-    flat_count = export_flat(out_file, flat_file)
-    print(f"  {flat_count} righe scritte in {flat_file}")
+    # 4. Affluenza comunale (votantiFI per provincia)
+    if not args.solo_scrutini:
+        province = [e for e in enti_data["enti"] if e["tipo"] == "PR"]
+        affluenza_file = os.path.join(out_dir, "affluenza.csv")
+        if not args.force and os.path.exists(affluenza_file) and os.path.getsize(affluenza_file) > 0:
+            print(f"Affluenza già presente: {affluenza_file} — skip (usa --force per riscaricare)")
+        else:
+            print("\nScarico affluenza per comune...")
+            aff_count = export_affluenza(data_elez, province, session, affluenza_file, delay=args.delay)
+            print(f"  {aff_count} righe scritte in {affluenza_file}")
 
 
 if __name__ == "__main__":
