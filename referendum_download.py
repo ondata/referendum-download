@@ -2,6 +2,7 @@
 """CLI per scaricare i dati dei referendum da eleapi.interno.gov.it in formato JSONLines."""
 
 import argparse
+import concurrent.futures
 import json
 import os
 import re
@@ -299,6 +300,12 @@ def main():
         action="store_true",
         help="Scarica solo l'affluenza (salta scrutini)",
     )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=4,
+        help="Numero di chiamate parallele per gli scrutini (default: 4)",
+    )
     args = parser.parse_args()
 
     data_elez = parse_url(args.url)
@@ -337,13 +344,39 @@ def main():
         else:
             written = 0
             errors = 0
-            with open(out_file, "w") as f:
-                for i, comune in enumerate(comuni):
-                    cod = comune["cod"]
-                    cod_reg, cod_prov, cod_com = decode_cod(cod)
-                    desc = comune["desc"]
+
+            def fetch_comune(comune):
+                cod = comune["cod"]
+                cod_reg, cod_prov, cod_com = decode_cod(cod)
+                result = comune, get_scrutini_comune(data_elez, cod_reg, cod_prov, cod_com, session)
+                if args.delay > 0:
+                    time.sleep(args.delay)
+                return result
+
+            results = {}
+            completed = 0
+            print(f"  Scarico scrutini con {args.workers} worker paralleli (delay {args.delay}s)...")
+            with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
+                future_to_idx = {executor.submit(fetch_comune, c): i for i, c in enumerate(comuni)}
+                for future in concurrent.futures.as_completed(future_to_idx):
+                    idx = future_to_idx[future]
+                    completed += 1
                     try:
-                        data = get_scrutini_comune(data_elez, cod_reg, cod_prov, cod_com, session)
+                        comune, data = future.result()
+                        results[idx] = (comune, data)
+                    except Exception as e:
+                        comune = comuni[idx]
+                        print(f"  ERRORE {comune['desc']} ({comune['cod']}): {e}", file=sys.stderr)
+                        errors += 1
+                    if completed % 50 == 0 or completed == len(comuni):
+                        print(f"  [{completed}/{len(comuni)}]")
+
+            with open(out_file, "w") as f:
+                for i in range(len(comuni)):
+                    if i in results:
+                        comune, data = results[i]
+                        cod = comune["cod"]
+                        cod_reg, cod_prov, cod_com = decode_cod(cod)
                         record = {
                             "livello": "comune",
                             "area": "italia",
@@ -355,13 +388,6 @@ def main():
                         }
                         f.write(json.dumps(record, ensure_ascii=False) + "\n")
                         written += 1
-                    except Exception as e:
-                        print(f"  ERRORE {desc} ({cod}): {e}", file=sys.stderr)
-                        errors += 1
-                    if (i + 1) % 50 == 0 or (i + 1) == len(comuni):
-                        print(f"  [{i + 1}/{len(comuni)}] {desc}")
-                    if args.delay > 0 and i < len(comuni) - 1:
-                        time.sleep(args.delay)
 
                 # Estero
                 print("Scarico scrutini estero...")
