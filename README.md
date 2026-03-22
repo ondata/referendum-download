@@ -12,6 +12,8 @@ Scarica scrutini e affluenza a livello comunale per tutti i comuni italiani, pi�
 ## Installazione
 
 ```bash
+git clone https://github.com/aborruso/referendum-download.git
+cd referendum-download
 uv venv .venv
 source .venv/bin/activate
 uv pip install -e .
@@ -36,6 +38,12 @@ referendum-download --solo-scrutini --force 20260322
 referendum-download --solo-scrutini --limit 10 --delay 0.3 20260322
 ```
 
+In alternativa, con `uv run` senza attivare il venv:
+
+```bash
+uv run referendum-download 20260322
+```
+
 ### Opzioni
 
 | Opzione | Default | Descrizione |
@@ -46,6 +54,7 @@ referendum-download --solo-scrutini --limit 10 --delay 0.3 20260322
 | `--force` | off | Forza re-download anche se i file esistono già |
 | `--solo-scrutini` | off | Scarica solo gli scrutini, salta affluenza |
 | `--solo-affluenza` | off | Scarica solo l'affluenza, salta scrutini |
+| `--workers` | `4` | Chiamate parallele per gli scrutini |
 
 ## Struttura della cartella `data`
 
@@ -55,6 +64,7 @@ data/
 │   ├── enti.jsonl
 │   ├── scrutini.jsonl
 │   ├── scrutini_flat.jsonl
+│   ├── scrutini_flat.csv
 │   └── affluenza.csv
 └── lookup_eligendo_istat.csv   # copia della lookup (generata da lookup/)
 ```
