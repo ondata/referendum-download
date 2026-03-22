@@ -47,6 +47,20 @@ referendum-download --solo-scrutini --limit 10 --delay 0.3 20260322
 | `--solo-scrutini` | off | Scarica solo gli scrutini, salta affluenza |
 | `--solo-affluenza` | off | Scarica solo l'affluenza, salta scrutini |
 
+## Struttura della cartella `data`
+
+```
+data/
+├── {YYYYMMDD}/          # una sottocartella per tornata elettorale
+│   ├── enti.jsonl
+│   ├── scrutini.jsonl
+│   ├── scrutini_flat.jsonl
+│   └── affluenza.csv
+└── lookup_eligendo_istat.csv   # copia della lookup (generata da lookup/)
+```
+
+Ogni tornata è identificata dalla data nel formato `YYYYMMDD` (es. `20260322`).
+
 ## Output
 
 I file vengono salvati in `data/{YYYYMMDD}/`:
