@@ -1,5 +1,13 @@
 # LOG
 
+## 2026-03-22 (parallelismo scrutini)
+
+- Scrutini comunali ora scaricati in parallelo con `concurrent.futures.ThreadPoolExecutor`
+- Nuovo argomento `--workers` (default: 4) per controllare il numero di chiamate parallele
+- Rate limiter globale thread-safe: rispetta `--delay` tra una richiesta e la successiva
+- Output scritto in ordine originale (raccolta in dict poi scrittura sequenziale)
+- Speedup atteso ~4x rispetto alla versione sequenziale
+
 ## 2026-03-22 (aggiornamento pomeriggio)
 
 - Scoperto endpoint per affluenza **comunale**: `votantiFI/DE/{data}/TE/09/SK/01/PR/{cod_prov}`
