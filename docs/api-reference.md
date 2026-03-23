@@ -211,13 +211,73 @@ GET /siel/PX/scrutiniFI/DE/{data}/TE/09/RE/{codice_regione}/PR/{codice_provincia
 
 ### 4. scrutiniFE - Risultati scrutini Estero
 
+**Livello nazionale (totale estero):**
+
 ```
 GET /siel/PX/scrutiniFE/DE/{data}/TE/09
 ```
 
-Stessa struttura di scrutiniFI, per le circoscrizioni estero. Campi votanti leggermente diversi (solo `vot_t`, senza `vot_m`/`vot_f`).
+**Livello ripartizione:**
 
-### 5. votantiFI - Dati affluenza
+```
+GET /siel/PX/scrutiniFE/DE/{data}/TE/09/ER/{cod_ripartizione}
+```
+
+**Livello nazione:**
+
+```
+GET /siel/PX/scrutiniFE/DE/{data}/TE/09/SK/{sk}/ER/{cod_ripartizione}/NA/{cod_nazione}
+```
+
+Campi votanti diversi dall'Italia: solo `vot_t`, senza `vot_m`/`vot_f`.
+
+**Risposta (livello nazione):**
+
+```json
+{
+  "int": {
+    "l_terr": "NAZIONE",
+    "area": "E",
+    "cod_rip": 2,
+    "desc_rip": "AMERICA MERIDIONALE",
+    "cod_naz": 263,
+    "desc_naz": "BRASILE",
+    "ele_t": 561765,
+    "sz_tot": 177
+  },
+  "scheda": [...]
+}
+```
+
+**Codici ripartizione (`cod_rip`):**
+
+Ricavabili da `getentiFE` (tipo=`ER`) o da `votantiFE` (tipo=`RIPARTIZIONE`). Il `cod` delle nazioni in `getentiFE` ha formato `{ER}{NA:03d}` (es. `2263` = ER=2, NA=263 = Brasile).
+
+**Derivazione URL pagina web:**
+
+Il suffisso URL `012263` si decompone come `{SK:02d}{cod_nazione:04d}`:
+- `01` = SK (quesito 01)
+- `2263` = cod nazione da `getentiFE` (ER=2, NA=263)
+
+Esempi:
+- `012263` → Brasile (`SK/01/ER/02/NA/263`)
+- `014313` → India (`SK/01/ER/04/NA/313`)
+
+### 5. votantiFE - Dati affluenza Estero
+
+```
+GET /siel/PX/votantiFE/DE/{data}/TE/09
+```
+
+Restituisce affluenza estero con struttura analoga a `votantiFI`:
+- `ente_p`: totale estero
+- `enti_f`: lista ripartizioni geografiche (tipo=`RIPARTIZIONE`, `cod` = cod_rip)
+
+Solo `vot_t` (no `vot_m`/`vot_f`). Una sola rilevazione temporale (no intermedie orarie).
+
+---
+
+### 6. votantiFI - Dati affluenza
 
 **Livello nazionale + regionale:**
 
