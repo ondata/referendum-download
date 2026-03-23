@@ -2,6 +2,10 @@
 
 ## 2026-03-23
 
+- Aggiunto retry automatico in `api_get` (2 tentativi, delay 5s) per errori di rete (`ConnectionError`, `Timeout`); i 404 non vengono retrati
+- Aggiunto meccanismo resume/append per scrutini `--livello cm`: se `scrutini.jsonl` esiste, legge i `cod` già presenti, salta quelli e fa append dei nuovi; rieseguire lo script completa automaticamente i comuni mancanti
+
+
 - Aggiunto parametro `--livello [rg|pr|cm]` (default `cm`) per scegliere il livello geografico degli scrutini
   - `rg`: scarica scrutini per 20 regioni → `scrutini_regioni.jsonl` + flat
   - `pr`: scarica scrutini per 110 province → `scrutini_province.jsonl` + flat

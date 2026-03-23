@@ -31,15 +31,24 @@ def parse_url(url):
     raise ValueError(f"Impossibile estrarre la data dall'URL: {url}")
 
 
-def api_get(endpoint, session):
-    """Chiamata GET all'API con gestione errori."""
+def api_get(endpoint, session, retries=2, retry_delay=5):
+    """Chiamata GET all'API con gestione errori e retry per errori di rete."""
     url = f"{BASE_URL}/{endpoint}"
-    resp = session.get(url, headers=HEADERS, timeout=30)
-    resp.raise_for_status()
-    data = resp.json()
-    if "Error" in data:
-        raise RuntimeError(f"API error: {data['Error']}")
-    return data
+    for attempt in range(retries + 1):
+        try:
+            resp = session.get(url, headers=HEADERS, timeout=30)
+            resp.raise_for_status()
+            data = resp.json()
+            if "Error" in data:
+                raise RuntimeError(f"API error: {data['Error']}")
+            return data
+        except requests.exceptions.HTTPError:
+            raise  # non retrare errori HTTP (404, ecc.)
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            if attempt < retries:
+                time.sleep(retry_delay)
+            else:
+                raise
 
 
 def get_enti(data_elez, session):
@@ -403,13 +412,34 @@ def main():
         }
         out_file = out_file_map[args.livello]
 
-        if not args.force and os.path.exists(out_file) and os.path.getsize(out_file) > 0:
-            print(f"Scrutini già presenti: {out_file} — skip (usa --force per riscaricare)")
-        else:
-            written = 0
-            errors = 0
+        written = 0
+        errors = 0
+        needs_flat_export = False
 
-            if args.livello == "cm":
+        if args.livello == "cm":
+            # Resume: leggi cod già scaricati dal file esistente
+            existing_cods = set()
+            if not args.force and os.path.exists(out_file):
+                with open(out_file) as f:
+                    for line in f:
+                        try:
+                            rec = json.loads(line)
+                            if rec.get("cod"):
+                                existing_cods.add(rec["cod"])
+                        except json.JSONDecodeError:
+                            pass
+                written = len(existing_cods)
+
+            comuni_da_scaricare = [c for c in comuni if c["cod"] not in existing_cods]
+
+            if existing_cods:
+                print(f"  Resume: {len(existing_cods)} comuni già presenti, {len(comuni_da_scaricare)} da scaricare")
+
+            if not comuni_da_scaricare and "estero" in existing_cods:
+                print(f"Scrutini già completi: {out_file} — skip (usa --force per riscaricare)")
+            else:
+                needs_flat_export = True
+
                 def fetch_comune(comune):
                     cod = comune["cod"]
                     cod_reg, cod_prov, cod_com = decode_cod(cod)
@@ -420,24 +450,26 @@ def main():
 
                 results = {}
                 completed = 0
-                print(f"  Scarico scrutini comuni con {args.workers} worker paralleli (delay {args.delay}s)...")
-                with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
-                    future_to_idx = {executor.submit(fetch_comune, c): i for i, c in enumerate(comuni)}
-                    for future in concurrent.futures.as_completed(future_to_idx):
-                        idx = future_to_idx[future]
-                        completed += 1
-                        try:
-                            comune, data = future.result()
-                            results[idx] = (comune, data)
-                        except Exception as e:
-                            comune = comuni[idx]
-                            print(f"  ERRORE {comune['desc']} ({comune['cod']}): {e}", file=sys.stderr)
-                            errors += 1
-                        if completed % 50 == 0 or completed == len(comuni):
-                            print(f"  [{completed}/{len(comuni)}]")
+                if comuni_da_scaricare:
+                    print(f"  Scarico scrutini comuni con {args.workers} worker paralleli (delay {args.delay}s)...")
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
+                        future_to_idx = {executor.submit(fetch_comune, c): i for i, c in enumerate(comuni_da_scaricare)}
+                        for future in concurrent.futures.as_completed(future_to_idx):
+                            idx = future_to_idx[future]
+                            completed += 1
+                            try:
+                                comune, data = future.result()
+                                results[idx] = (comune, data)
+                            except Exception as e:
+                                comune = comuni_da_scaricare[idx]
+                                print(f"  ERRORE {comune['desc']} ({comune['cod']}): {e}", file=sys.stderr)
+                                errors += 1
+                            if completed % 50 == 0 or completed == len(comuni_da_scaricare):
+                                print(f"  [{completed}/{len(comuni_da_scaricare)}]")
 
-                with open(out_file, "w") as f:
-                    for i in range(len(comuni)):
+                file_mode = "a" if existing_cods else "w"
+                with open(out_file, file_mode) as f:
+                    for i in range(len(comuni_da_scaricare)):
                         if i in results:
                             comune, data = results[i]
                             cod = comune["cod"]
@@ -454,19 +486,24 @@ def main():
                             f.write(json.dumps(record, ensure_ascii=False) + "\n")
                             written += 1
 
-                    # Estero (solo livello comune)
-                    print("Scarico scrutini estero...")
-                    try:
-                        data_estero = get_scrutini_estero(data_elez, session)
-                        record = {"livello": "nazionale", "area": "estero", "cod": "estero", "data": data_estero}
-                        f.write(json.dumps(record, ensure_ascii=False) + "\n")
-                        written += 1
-                        print("  Estero OK")
-                    except Exception as e:
-                        print(f"  ERRORE estero: {e}", file=sys.stderr)
-                        errors += 1
+                    # Estero (solo se non già presente)
+                    if "estero" not in existing_cods:
+                        print("Scarico scrutini estero...")
+                        try:
+                            data_estero = get_scrutini_estero(data_elez, session)
+                            record = {"livello": "nazionale", "area": "estero", "cod": "estero", "data": data_estero}
+                            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                            written += 1
+                            print("  Estero OK")
+                        except Exception as e:
+                            print(f"  ERRORE estero: {e}", file=sys.stderr)
+                            errors += 1
 
-            elif args.livello == "pr":
+        elif args.livello == "pr":
+            if not args.force and os.path.exists(out_file) and os.path.getsize(out_file) > 0:
+                print(f"Scrutini già presenti: {out_file} — skip (usa --force per riscaricare)")
+            else:
+                needs_flat_export = True
                 province_enti = [e for e in enti_data["enti"] if e["tipo"] == "PR"]
                 print(f"  Scarico scrutini per {len(province_enti)} province...")
                 with open(out_file, "w") as f:
@@ -493,7 +530,11 @@ def main():
                         if args.delay > 0 and i < len(province_enti) - 1:
                             time.sleep(args.delay)
 
-            elif args.livello == "rg":
+        elif args.livello == "rg":
+            if not args.force and os.path.exists(out_file) and os.path.getsize(out_file) > 0:
+                print(f"Scrutini già presenti: {out_file} — skip (usa --force per riscaricare)")
+            else:
+                needs_flat_export = True
                 regioni_enti = [e for e in enti_data["enti"] if e["tipo"] == "RE"]
                 print(f"  Scarico scrutini per {len(regioni_enti)} regioni...")
                 with open(out_file, "w") as f:
@@ -519,6 +560,7 @@ def main():
                         if args.delay > 0 and i < len(regioni_enti) - 1:
                             time.sleep(args.delay)
 
+        if needs_flat_export:
             print(f"\nCompletato: {written} record scritti in {out_file}")
             if errors:
                 print(f"Errori: {errors}")
