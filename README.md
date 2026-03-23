@@ -10,6 +10,7 @@ Referendum del 22 marzo 2026:
 
 | File | Descrizione | Stato |
 |------|-------------|-------|
+| [lookup_eligendo_istat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/lookup/lookup_eligendo_istat.csv) | Mappa codici Eligendo → ISTAT: utile per unire questi dati con altre fonti che usano i codici ISTAT comunali | disponibile |
 | [affluenza.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/affluenza.csv) | Affluenza per comune alle 4 rilevazioni | disponibile |
 | [scrutini_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_flat.csv) | Scrutini per comune per quesito | non ancora disponibili |
 
