@@ -63,6 +63,16 @@ def get_scrutini_estero(data_elez, session):
     return api_get(f"scrutiniFE/DE/{data_elez}/TE/09", session)
 
 
+def get_scrutini_regione(data_elez, cod_reg, session):
+    """Scarica scrutini per una singola regione."""
+    return api_get(f"scrutiniFI/DE/{data_elez}/TE/09/RE/{cod_reg}", session)
+
+
+def get_scrutini_provincia(data_elez, cod_reg, cod_prov, session):
+    """Scarica scrutini per una singola provincia."""
+    return api_get(f"scrutiniFI/DE/{data_elez}/TE/09/RE/{cod_reg}/PR/{cod_prov}", session)
+
+
 def get_votanti(data_elez, session):
     """Scarica affluenza nazionale + regionale."""
     return api_get(f"votantiFI/DE/{data_elez}/TE/09/SK/01", session)
@@ -348,6 +358,12 @@ def main():
         default=4,
         help="Numero di chiamate parallele per gli scrutini (default: 4)",
     )
+    parser.add_argument(
+        "--livello",
+        choices=["rg", "pr", "cm"],
+        default="cm",
+        help="Livello geografico scrutini: rg=regioni, pr=province, cm=comuni (default: cm)",
+    )
     args = parser.parse_args()
 
     data_elez = parse_url(args.url)
@@ -378,83 +394,142 @@ def main():
         comuni = comuni[: args.limit]
         print(f"  Limitato a {len(comuni)} comuni (--limit)")
 
-    # 2+3. Scrutini per comune + estero
+    # 2+3. Scrutini per livello geografico + estero (solo cm)
     if not args.solo_affluenza:
-        out_file = os.path.join(out_dir, "scrutini.jsonl")
+        out_file_map = {
+            "cm": os.path.join(out_dir, "scrutini.jsonl"),
+            "pr": os.path.join(out_dir, "scrutini_province.jsonl"),
+            "rg": os.path.join(out_dir, "scrutini_regioni.jsonl"),
+        }
+        out_file = out_file_map[args.livello]
+
         if not args.force and os.path.exists(out_file) and os.path.getsize(out_file) > 0:
             print(f"Scrutini già presenti: {out_file} — skip (usa --force per riscaricare)")
         else:
             written = 0
             errors = 0
 
-            def fetch_comune(comune):
-                cod = comune["cod"]
-                cod_reg, cod_prov, cod_com = decode_cod(cod)
-                result = comune, get_scrutini_comune(data_elez, cod_reg, cod_prov, cod_com, session)
-                if args.delay > 0:
-                    time.sleep(args.delay)
-                return result
+            if args.livello == "cm":
+                def fetch_comune(comune):
+                    cod = comune["cod"]
+                    cod_reg, cod_prov, cod_com = decode_cod(cod)
+                    result = comune, get_scrutini_comune(data_elez, cod_reg, cod_prov, cod_com, session)
+                    if args.delay > 0:
+                        time.sleep(args.delay)
+                    return result
 
-            results = {}
-            completed = 0
-            print(f"  Scarico scrutini con {args.workers} worker paralleli (delay {args.delay}s)...")
-            with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
-                future_to_idx = {executor.submit(fetch_comune, c): i for i, c in enumerate(comuni)}
-                for future in concurrent.futures.as_completed(future_to_idx):
-                    idx = future_to_idx[future]
-                    completed += 1
+                results = {}
+                completed = 0
+                print(f"  Scarico scrutini comuni con {args.workers} worker paralleli (delay {args.delay}s)...")
+                with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
+                    future_to_idx = {executor.submit(fetch_comune, c): i for i, c in enumerate(comuni)}
+                    for future in concurrent.futures.as_completed(future_to_idx):
+                        idx = future_to_idx[future]
+                        completed += 1
+                        try:
+                            comune, data = future.result()
+                            results[idx] = (comune, data)
+                        except Exception as e:
+                            comune = comuni[idx]
+                            print(f"  ERRORE {comune['desc']} ({comune['cod']}): {e}", file=sys.stderr)
+                            errors += 1
+                        if completed % 50 == 0 or completed == len(comuni):
+                            print(f"  [{completed}/{len(comuni)}]")
+
+                with open(out_file, "w") as f:
+                    for i in range(len(comuni)):
+                        if i in results:
+                            comune, data = results[i]
+                            cod = comune["cod"]
+                            cod_reg, cod_prov, cod_com = decode_cod(cod)
+                            record = {
+                                "livello": "comune",
+                                "area": "italia",
+                                "cod": cod,
+                                "cod_reg": cod_reg,
+                                "cod_prov": cod_prov,
+                                "cod_com": cod_com,
+                                "data": data,
+                            }
+                            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                            written += 1
+
+                    # Estero (solo livello comune)
+                    print("Scarico scrutini estero...")
                     try:
-                        comune, data = future.result()
-                        results[idx] = (comune, data)
-                    except Exception as e:
-                        comune = comuni[idx]
-                        print(f"  ERRORE {comune['desc']} ({comune['cod']}): {e}", file=sys.stderr)
-                        errors += 1
-                    if completed % 50 == 0 or completed == len(comuni):
-                        print(f"  [{completed}/{len(comuni)}]")
-
-            with open(out_file, "w") as f:
-                for i in range(len(comuni)):
-                    if i in results:
-                        comune, data = results[i]
-                        cod = comune["cod"]
-                        cod_reg, cod_prov, cod_com = decode_cod(cod)
-                        record = {
-                            "livello": "comune",
-                            "area": "italia",
-                            "cod": cod,
-                            "cod_reg": cod_reg,
-                            "cod_prov": cod_prov,
-                            "cod_com": cod_com,
-                            "data": data,
-                        }
+                        data_estero = get_scrutini_estero(data_elez, session)
+                        record = {"livello": "nazionale", "area": "estero", "cod": "estero", "data": data_estero}
                         f.write(json.dumps(record, ensure_ascii=False) + "\n")
                         written += 1
+                        print("  Estero OK")
+                    except Exception as e:
+                        print(f"  ERRORE estero: {e}", file=sys.stderr)
+                        errors += 1
 
-                # Estero
-                print("Scarico scrutini estero...")
-                try:
-                    data_estero = get_scrutini_estero(data_elez, session)
-                    record = {"livello": "nazionale", "area": "estero", "cod": "estero", "data": data_estero}
-                    f.write(json.dumps(record, ensure_ascii=False) + "\n")
-                    written += 1
-                    print("  Estero OK")
-                except Exception as e:
-                    print(f"  ERRORE estero: {e}", file=sys.stderr)
-                    errors += 1
+            elif args.livello == "pr":
+                province_enti = [e for e in enti_data["enti"] if e["tipo"] == "PR"]
+                print(f"  Scarico scrutini per {len(province_enti)} province...")
+                with open(out_file, "w") as f:
+                    for i, ente in enumerate(province_enti):
+                        cod = ente["cod"]
+                        cod_reg = cod[0:2]
+                        cod_prov = cod[2:5]
+                        try:
+                            data = get_scrutini_provincia(data_elez, cod_reg, cod_prov, session)
+                            record = {
+                                "livello": "provincia",
+                                "area": "italia",
+                                "cod": cod,
+                                "cod_reg": cod_reg,
+                                "cod_prov": cod_prov,
+                                "cod_com": "",
+                                "data": data,
+                            }
+                            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                            written += 1
+                        except Exception as e:
+                            print(f"  ERRORE {ente['desc']} ({cod}): {e}", file=sys.stderr)
+                            errors += 1
+                        if args.delay > 0 and i < len(province_enti) - 1:
+                            time.sleep(args.delay)
+
+            elif args.livello == "rg":
+                regioni_enti = [e for e in enti_data["enti"] if e["tipo"] == "RE"]
+                print(f"  Scarico scrutini per {len(regioni_enti)} regioni...")
+                with open(out_file, "w") as f:
+                    for i, ente in enumerate(regioni_enti):
+                        cod = ente["cod"]
+                        cod_reg = cod[0:2]
+                        try:
+                            data = get_scrutini_regione(data_elez, cod_reg, session)
+                            record = {
+                                "livello": "regione",
+                                "area": "italia",
+                                "cod": cod,
+                                "cod_reg": cod_reg,
+                                "cod_prov": "",
+                                "cod_com": "",
+                                "data": data,
+                            }
+                            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                            written += 1
+                        except Exception as e:
+                            print(f"  ERRORE {ente['desc']} ({cod}): {e}", file=sys.stderr)
+                            errors += 1
+                        if args.delay > 0 and i < len(regioni_enti) - 1:
+                            time.sleep(args.delay)
 
             print(f"\nCompletato: {written} record scritti in {out_file}")
             if errors:
                 print(f"Errori: {errors}")
 
             # Export flat
-            flat_file = os.path.join(out_dir, "scrutini_flat.jsonl")
+            flat_stem = os.path.splitext(out_file)[0]
+            flat_file = flat_stem + "_flat.jsonl"
+            flat_csv = flat_stem + "_flat.csv"
             print("Genero export flat...")
             flat_count = export_flat(out_file, flat_file)
             print(f"  {flat_count} righe scritte in {flat_file}")
-
-            # Export flat CSV
-            flat_csv = os.path.join(out_dir, "scrutini_flat.csv")
             jsonl_to_csv(flat_file, flat_csv)
             print(f"  {flat_count} righe scritte in {flat_csv}")
 

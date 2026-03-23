@@ -13,6 +13,8 @@ from referendum_download import (
     decode_cod,
     export_flat,
     flatten_record,
+    get_scrutini_provincia,
+    get_scrutini_regione,
     parse_url,
 )
 
@@ -205,6 +207,80 @@ def test_export_flat_roundtrip():
         assert len(rows) == 2
         assert rows[0]["quesito_cod"] == "1"
         assert rows[1]["quesito_cod"] == "2"
+
+
+def test_flatten_record_regione():
+    record = {
+        "livello": "regione",
+        "area": "italia",
+        "cod": "010000000",
+        "cod_reg": "01",
+        "cod_prov": "",
+        "cod_com": "",
+        "data": {
+            "int": {"desc_reg": "PIEMONTE", "ele_t": 3300000, "sz_tot": 4790},
+            "scheda": [{"cod": 1, "voti_si": 700000, "voti_no": 800000}],
+        },
+    }
+    rows = flatten_record(record)
+    assert len(rows) == 1
+    assert rows[0]["livello"] == "regione"
+    assert rows[0]["cod_reg"] == "01"
+    assert rows[0]["cod_prov"] == ""
+    assert rows[0]["cod_com"] == ""
+    assert rows[0]["desc_reg"] == "PIEMONTE"
+    assert rows[0]["desc_prov"] == ""
+    assert rows[0]["desc_com"] == ""
+
+
+def test_flatten_record_provincia():
+    record = {
+        "livello": "provincia",
+        "area": "italia",
+        "cod": "010020000",
+        "cod_reg": "01",
+        "cod_prov": "002",
+        "cod_com": "",
+        "data": {
+            "int": {"desc_prov": "ALESSANDRIA", "desc_reg": "PIEMONTE", "ele_t": 313000, "sz_tot": 535},
+            "scheda": [{"cod": 1, "voti_si": 82000, "voti_no": 75000}],
+        },
+    }
+    rows = flatten_record(record)
+    assert len(rows) == 1
+    assert rows[0]["livello"] == "provincia"
+    assert rows[0]["cod_prov"] == "002"
+    assert rows[0]["cod_com"] == ""
+    assert rows[0]["desc_prov"] == "ALESSANDRIA"
+    assert rows[0]["desc_com"] == ""
+
+
+def test_get_scrutini_regione():
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"int": {"cod_reg": 1}, "scheda": []}
+    mock_resp.raise_for_status = MagicMock()
+    session = MagicMock()
+    session.get.return_value = mock_resp
+
+    result = get_scrutini_regione("20260322", "01", session)
+    assert result == {"int": {"cod_reg": 1}, "scheda": []}
+    called_url = session.get.call_args[0][0]
+    assert "RE/01" in called_url
+    assert "PR/" not in called_url
+
+
+def test_get_scrutini_provincia():
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"int": {"cod_prov": 2}, "scheda": []}
+    mock_resp.raise_for_status = MagicMock()
+    session = MagicMock()
+    session.get.return_value = mock_resp
+
+    result = get_scrutini_provincia("20260322", "01", "002", session)
+    assert result == {"int": {"cod_prov": 2}, "scheda": []}
+    called_url = session.get.call_args[0][0]
+    assert "RE/01/PR/002" in called_url
+    assert "CM/" not in called_url
 
 
 def test_export_flat_empty_file():

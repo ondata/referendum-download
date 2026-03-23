@@ -2,6 +2,12 @@
 
 ## 2026-03-23
 
+- Aggiunto parametro `--livello [rg|pr|cm]` (default `cm`) per scegliere il livello geografico degli scrutini
+  - `rg`: scarica scrutini per 20 regioni → `scrutini_regioni.jsonl` + flat
+  - `pr`: scarica scrutini per 110 province → `scrutini_province.jsonl` + flat
+  - `cm`: comportamento precedente (7895 comuni + estero) → `scrutini.jsonl` + flat
+  - Endpoint verificati live: `scrutiniFI/.../RE/{rg}` e `scrutiniFI/.../RE/{rg}/PR/{pr}`
+  - Aggiunti 6 test (flatten regione/provincia, get_scrutini_regione/provincia)
 - Aggiunta `lookup/lookup_province_eligendo_istat.csv`: 110 province, mapping deterministico da lookup comuni (no fuzzy)
   - Colonne: `cod_reg`, `cod_prov_eligendo`, `cod_prov_istat`, `regione`, `provincia`
   - Derivato estraendo `cod_eligendo[3:5]` → `cod_prov_eligendo` e `cod_istat[1:3]` → `cod_prov_istat`

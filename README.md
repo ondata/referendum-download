@@ -2,7 +2,7 @@
 
 CLI Python per scaricare i dati dei referendum italiani da [Eligendo](https://elezioni.interno.gov.it) (`eleapi.interno.gov.it`) in formato JSONLines e CSV.
 
-Scarica scrutini e affluenza a livello comunale per tutti i comuni italiani, più i dati dell'estero.
+Scarica scrutini e affluenza per tutti i comuni italiani, con supporto per livelli geografici aggregati (province, regioni), più i dati dell'estero.
 
 ## Dati
 
@@ -13,6 +13,8 @@ Referendum del 22 marzo 2026:
 | [lookup_eligendo_istat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/lookup/lookup_eligendo_istat.csv) | Mappa codici Eligendo → ISTAT: utile per unire questi dati con altre fonti che usano i codici ISTAT comunali | disponibile |
 | [affluenza.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/affluenza.csv) | Affluenza per comune alle 4 rilevazioni | disponibile |
 | [scrutini_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_flat.csv) | Scrutini per comune per quesito | non ancora disponibili |
+| [scrutini_province_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_province_flat.csv) | Scrutini per provincia per quesito | non ancora disponibili |
+| [scrutini_regioni_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_regioni_flat.csv) | Scrutini per regione per quesito | disponibile |
 
 ## Requisiti
 
@@ -44,6 +46,12 @@ referendum-download --solo-affluenza --force 20260322
 # Solo scrutini (es. dopo chiusura seggi)
 referendum-download --solo-scrutini --force 20260322
 
+# Scrutini per provincia
+referendum-download --solo-scrutini --livello pr 20260322
+
+# Scrutini per regione
+referendum-download --solo-scrutini --livello rg 20260322
+
 # Test con pochi comuni
 referendum-download --solo-scrutini --limit 10 --delay 0.3 20260322
 ```
@@ -64,19 +72,26 @@ uv run referendum-download 20260322
 | `--force` | off | Forza re-download anche se i file esistono già |
 | `--solo-scrutini` | off | Scarica solo gli scrutini, salta affluenza |
 | `--solo-affluenza` | off | Scarica solo l'affluenza, salta scrutini |
-| `--workers` | `4` | Chiamate parallele per gli scrutini |
+| `--workers` | `4` | Chiamate parallele per gli scrutini (solo `--livello cm`) |
+| `--livello` | `cm` | Livello geografico scrutini: `rg`=regioni, `pr`=province, `cm`=comuni |
 
 ## Struttura della cartella `data`
 
 ```
 data/
-├── {YYYYMMDD}/          # una sottocartella per tornata elettorale
+├── {YYYYMMDD}/                      # una sottocartella per tornata elettorale
 │   ├── enti.jsonl
-│   ├── scrutini.jsonl
+│   ├── scrutini.jsonl               # scrutini comuni (--livello cm)
 │   ├── scrutini_flat.jsonl
 │   ├── scrutini_flat.csv
+│   ├── scrutini_province.jsonl      # scrutini province (--livello pr)
+│   ├── scrutini_province_flat.jsonl
+│   ├── scrutini_province_flat.csv
+│   ├── scrutini_regioni.jsonl       # scrutini regioni (--livello rg)
+│   ├── scrutini_regioni_flat.jsonl
+│   ├── scrutini_regioni_flat.csv
 │   └── affluenza.csv
-└── lookup_eligendo_istat.csv   # copia della lookup (generata da lookup/)
+└── lookup_eligendo_istat.csv        # copia della lookup (generata da lookup/)
 ```
 
 Ogni tornata è identificata dalla data nel formato `YYYYMMDD` (es. `20260322`).
@@ -88,9 +103,12 @@ I file vengono salvati in `data/{YYYYMMDD}/`:
 | File | Descrizione |
 |------|-------------|
 | `enti.jsonl` | Lista completa delle entità territoriali (regioni, province, comuni) |
-| `scrutini.jsonl` | Dati raw degli scrutini (un record JSON per comune + estero) |
-| `scrutini_flat.jsonl` | Dati appiattiti: una riga per comune per quesito referendario |
-| `scrutini_flat.csv` | Stesso contenuto di `scrutini_flat.jsonl` in formato CSV |
+| `scrutini.jsonl` | Scrutini raw per comune (+ estero) |
+| `scrutini_flat.jsonl` / `.csv` | Scrutini comuni appiattiti: una riga per comune per quesito |
+| `scrutini_province.jsonl` | Scrutini raw per provincia |
+| `scrutini_province_flat.jsonl` / `.csv` | Scrutini province appiattiti: una riga per provincia per quesito |
+| `scrutini_regioni.jsonl` | Scrutini raw per regione |
+| `scrutini_regioni_flat.jsonl` / `.csv` | Scrutini regioni appiattiti: una riga per regione per quesito |
 | `affluenza.csv` | Affluenza per comune alle 4 rilevazioni (12:00, 19:00, 23:00, finale) |
 
 ### Struttura `scrutini_flat.jsonl`
