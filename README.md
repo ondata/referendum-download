@@ -1,6 +1,6 @@
 # referendum-download
 
-CLI Python per scaricare i dati dei referendum italiani da [Eligendo](https://elezioni.interno.gov.it) (`eleapi.interno.gov.it`) in formato JSONLines.
+CLI Python per scaricare i dati dei referendum italiani da [Eligendo](https://elezioni.interno.gov.it) (`eleapi.interno.gov.it`) in formato JSONLines e CSV.
 
 Scarica scrutini e affluenza a livello comunale per tutti i comuni italiani, più i dati dell'estero.
 
