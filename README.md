@@ -57,6 +57,15 @@ referendum-download --solo-scrutini --livello rg 20260322
 
 # Test con pochi comuni
 referendum-download --solo-scrutini --limit 10 --delay 0.3 20260322
+
+# Dati estero (scrutini per nazione + affluenza per ripartizione)
+referendum-download --estero 20260322
+
+# Solo scrutini estero
+referendum-download --estero --solo-scrutini 20260322
+
+# Solo affluenza estero
+referendum-download --estero --solo-affluenza 20260322
 ```
 
 In alternativa, con `uv run` senza attivare il venv:
