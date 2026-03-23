@@ -114,10 +114,10 @@ voti_si, voti_no, perc_si, perc_no
 Una riga per entità (nazionale / regione / provincia / comune) per ogni rilevazione:
 
 ```
-livello, cod_eligendo, cod_istat, cod_reg, cod_prov,
-denominazione, elettori_t,
+livello, cod_eligendo, cod_istat, cod_reg, cod_prov, cod_prov_istat,
+denominazione, elettori_m, elettori_f, elettori_t,
 rilevazione, ora, dt_rilevazione,
-sezioni_perv, sezioni_tot, votanti_t, perc_vot
+sezioni_perv, sezioni_tot, votanti_m, votanti_f, votanti_t, perc_vot
 ```
 
 L'affluenza per comune usa 1 chiamata API per provincia (110 totali), non per comune.
