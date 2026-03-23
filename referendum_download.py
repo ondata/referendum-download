@@ -437,7 +437,7 @@ def export_scrutini_estero_nazioni(data_elez, nazioni, session, out_file, worker
                 print(f"  [{completed}/{len(nazioni_da_scaricare)}]")
 
     file_mode = "a" if existing_cods else "w"
-    written = len(existing_cods)
+    new_written = 0
     with open(out_file, file_mode) as f:
         for i in range(len(nazioni_da_scaricare)):
             if i in results:
@@ -453,11 +453,11 @@ def export_scrutini_estero_nazioni(data_elez, nazioni, session, out_file, worker
                     "data": data,
                 }
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
-                written += 1
+                new_written += 1
 
     if errors:
         print(f"  Errori: {errors}")
-    return written
+    return new_written
 
 
 def export_affluenza_estero(data_elez, session, out_file):
@@ -563,6 +563,11 @@ def main():
         choices=["rg", "pr", "cm"],
         default="cm",
         help="Livello geografico scrutini: rg=regioni, pr=province, cm=comuni (default: cm)",
+    )
+    parser.add_argument(
+        "--estero",
+        action="store_true",
+        help="Scarica anche i dati estero (enti, scrutini per nazione, affluenza)",
     )
     args = parser.parse_args()
 
@@ -777,55 +782,57 @@ def main():
             aff_count = export_affluenza(data_elez, province, session, affluenza_file, delay=args.delay)
             print(f"  {aff_count} righe scritte in {affluenza_file}")
 
-    # 5. Entità estero
-    enti_estero_file = os.path.join(out_dir, "enti_estero.jsonl")
-    if not args.force and os.path.exists(enti_estero_file) and os.path.getsize(enti_estero_file) > 0:
-        print(f"Entità estero già presenti: {enti_estero_file} — skip")
-        enti_estero = []
-        with open(enti_estero_file) as f:
-            for line in f:
-                enti_estero.append(json.loads(line))
-    else:
-        print(f"Scarico entità estero...")
-        enti_estero_data = get_enti_estero(data_elez, session)
-        enti_estero = enti_estero_data["enti"]
-        with open(enti_estero_file, "w") as f:
-            for e in enti_estero:
-                f.write(json.dumps(e, ensure_ascii=False) + "\n")
-        print(f"  {len(enti_estero)} entità estero salvate in {enti_estero_file}")
-
-    nazioni = [e for e in enti_estero if e["tipo"] == "NA"]
-    print(f"  {len(nazioni)} nazioni estero")
-
-    # 6. Scrutini per nazione estero
-    if not args.solo_affluenza:
-        scrutini_estero_file = os.path.join(out_dir, "scrutini_estero.jsonl")
-        written_estero = export_scrutini_estero_nazioni(
-            data_elez, nazioni, session, scrutini_estero_file,
-            workers=args.workers, delay=0,
-        )
-        if written_estero:
-            print(f"\nCompletato: {written_estero} nazioni scritte in {scrutini_estero_file}")
-            flat_estero_jsonl = os.path.join(out_dir, "scrutini_estero_flat.jsonl")
-            flat_estero_csv = os.path.join(out_dir, "scrutini_estero_flat.csv")
-            print("Genero export flat estero...")
-            flat_count = export_flat_estero(scrutini_estero_file, flat_estero_jsonl)
-            print(f"  {flat_count} righe scritte in {flat_estero_jsonl}")
-            jsonl_to_csv(flat_estero_jsonl, flat_estero_csv)
-            print(f"  {flat_count} righe scritte in {flat_estero_csv}")
-
-    # 7. Affluenza estero
-    if not args.solo_scrutini:
-        affluenza_estero_file = os.path.join(out_dir, "affluenza_estero.csv")
-        if not args.force and os.path.exists(affluenza_estero_file) and os.path.getsize(affluenza_estero_file) > 0:
-            print(f"Affluenza estero già presente: {affluenza_estero_file} — skip (usa --force per riscaricare)")
+    # 5-7. Dati estero (solo con --estero)
+    if args.estero:
+        # 5. Entità estero
+        enti_estero_file = os.path.join(out_dir, "enti_estero.jsonl")
+        if not args.force and os.path.exists(enti_estero_file) and os.path.getsize(enti_estero_file) > 0:
+            print(f"Entità estero già presenti: {enti_estero_file} — skip")
+            enti_estero = []
+            with open(enti_estero_file) as f:
+                for line in f:
+                    enti_estero.append(json.loads(line))
         else:
-            print("\nScarico affluenza estero...")
-            try:
-                aff_estero_count = export_affluenza_estero(data_elez, session, affluenza_estero_file)
-                print(f"  {aff_estero_count} righe scritte in {affluenza_estero_file}")
-            except Exception as e:
-                print(f"  ERRORE affluenza estero: {e}", file=sys.stderr)
+            print(f"Scarico entità estero...")
+            enti_estero_data = get_enti_estero(data_elez, session)
+            enti_estero = enti_estero_data["enti"]
+            with open(enti_estero_file, "w") as f:
+                for e in enti_estero:
+                    f.write(json.dumps(e, ensure_ascii=False) + "\n")
+            print(f"  {len(enti_estero)} entità estero salvate in {enti_estero_file}")
+
+        nazioni = [e for e in enti_estero if e["tipo"] == "NA"]
+        print(f"  {len(nazioni)} nazioni estero")
+
+        # 6. Scrutini per nazione estero
+        if not args.solo_affluenza:
+            scrutini_estero_file = os.path.join(out_dir, "scrutini_estero.jsonl")
+            new_written = export_scrutini_estero_nazioni(
+                data_elez, nazioni, session, scrutini_estero_file,
+                workers=args.workers, delay=0,
+            )
+            if new_written:
+                print(f"\nCompletato: {new_written} nazioni in {scrutini_estero_file}")
+                flat_estero_jsonl = os.path.join(out_dir, "scrutini_estero_flat.jsonl")
+                flat_estero_csv = os.path.join(out_dir, "scrutini_estero_flat.csv")
+                print("Genero export flat estero...")
+                flat_count = export_flat_estero(scrutini_estero_file, flat_estero_jsonl)
+                print(f"  {flat_count} righe scritte in {flat_estero_jsonl}")
+                jsonl_to_csv(flat_estero_jsonl, flat_estero_csv)
+                print(f"  {flat_count} righe scritte in {flat_estero_csv}")
+
+        # 7. Affluenza estero
+        if not args.solo_scrutini:
+            affluenza_estero_file = os.path.join(out_dir, "affluenza_estero.csv")
+            if not args.force and os.path.exists(affluenza_estero_file) and os.path.getsize(affluenza_estero_file) > 0:
+                print(f"Affluenza estero già presente: {affluenza_estero_file} — skip (usa --force per riscaricare)")
+            else:
+                print("\nScarico affluenza estero...")
+                try:
+                    aff_estero_count = export_affluenza_estero(data_elez, session, affluenza_estero_file)
+                    print(f"  {aff_estero_count} righe scritte in {affluenza_estero_file}")
+                except Exception as e:
+                    print(f"  ERRORE affluenza estero: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

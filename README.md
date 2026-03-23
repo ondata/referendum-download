@@ -77,6 +77,7 @@ uv run referendum-download 20260322
 | `--solo-affluenza` | off | Scarica solo l'affluenza, salta scrutini |
 | `--workers` | `4` | Chiamate parallele per gli scrutini (solo `--livello cm`) |
 | `--livello` | `cm` | Livello geografico scrutini: `rg`=regioni, `pr`=province, `cm`=comuni |
+| `--estero` | off | Scarica anche i dati estero (enti, scrutini per nazione, affluenza) |
 
 ## Struttura della cartella `data`
 

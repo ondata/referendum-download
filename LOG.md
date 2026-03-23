@@ -2,7 +2,7 @@
 
 ## 2026-03-23
 
-- Aggiunto download dati estero: `enti_estero.jsonl`, `scrutini_estero.jsonl`, `scrutini_estero_flat.jsonl/csv`, `affluenza_estero.csv`
+- Aggiunto flag `--estero` (off by default) per abilitare download dati estero: `enti_estero.jsonl`, `scrutini_estero.jsonl`, `scrutini_estero_flat.jsonl/csv`, `affluenza_estero.csv`
 - Scrutini per singola nazione via `scrutiniFE/.../SK/01/ER/{er}/NA/{na}`; 181 nazioni in ~5s con delay=0 e 4 worker
 - Aggiornato `docs/api-reference.md` con endpoint estero (scrutini per nazione/ripartizione, votantiFE, pattern URL)
 
