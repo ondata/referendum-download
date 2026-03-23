@@ -15,6 +15,9 @@ Referendum del 22 marzo 2026:
 | [scrutini_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_flat.csv) | Scrutini per comune per quesito | non ancora disponibili |
 | [scrutini_province_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_province_flat.csv) | Scrutini per provincia per quesito | non ancora disponibili |
 | [scrutini_regioni_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_regioni_flat.csv) | Scrutini per regione per quesito | disponibile |
+| [enti_estero.jsonl](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/enti_estero.jsonl) | Lista nazioni e ripartizioni estero | disponibile |
+| [scrutini_estero_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_estero_flat.csv) | Scrutini per nazione estero per quesito | disponibile |
+| [affluenza_estero.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/affluenza_estero.csv) | Affluenza estero per ripartizione geografica | disponibile |
 
 ## Requisiti
 
@@ -90,7 +93,12 @@ data/
 │   ├── scrutini_regioni.jsonl       # scrutini regioni (--livello rg)
 │   ├── scrutini_regioni_flat.jsonl
 │   ├── scrutini_regioni_flat.csv
-│   └── affluenza.csv
+│   ├── affluenza.csv
+│   ├── enti_estero.jsonl            # nazioni e ripartizioni estero
+│   ├── scrutini_estero.jsonl        # scrutini per nazione estero
+│   ├── scrutini_estero_flat.jsonl
+│   ├── scrutini_estero_flat.csv
+│   └── affluenza_estero.csv
 └── lookup_eligendo_istat.csv        # copia della lookup (generata da lookup/)
 ```
 
@@ -110,6 +118,10 @@ I file vengono salvati in `data/{YYYYMMDD}/`:
 | `scrutini_regioni.jsonl` | Scrutini raw per regione |
 | `scrutini_regioni_flat.jsonl` / `.csv` | Scrutini regioni appiattiti: una riga per regione per quesito |
 | `affluenza.csv` | Affluenza per comune alle 4 rilevazioni (12:00, 19:00, 23:00, finale) |
+| `enti_estero.jsonl` | Lista nazioni (tipo=`NA`) e ripartizioni (tipo=`ER`) estero |
+| `scrutini_estero.jsonl` | Scrutini raw per nazione estero |
+| `scrutini_estero_flat.jsonl` / `.csv` | Scrutini estero appiattiti: una riga per nazione per quesito |
+| `affluenza_estero.csv` | Affluenza estero per livello (totale estero + ripartizioni) |
 
 ### Struttura `scrutini_flat.jsonl`
 
@@ -126,6 +138,31 @@ voti_si, voti_no, perc_si, perc_no
 ```
 
 `cod_istat` è il codice ISTAT a 6 cifre del comune (es. `015146`), ricavato dalla lookup table `lookup/lookup_eligendo_istat.csv`.
+
+### Struttura `scrutini_estero_flat.jsonl`
+
+Ogni riga contiene:
+
+```
+cod, livello, cod_rip, desc_rip, cod_naz, desc_naz,
+elettori_t, sezioni_tot,
+quesito_cod, sezioni_perv,
+votanti_t, perc_vot,
+sk_bianche, sk_nulle, sk_contestate,
+voti_si, voti_no, perc_si, perc_no
+```
+
+`cod_rip` / `cod_naz` corrispondono ai codici Eligendo della ripartizione e della nazione.
+
+### Struttura `affluenza_estero.csv`
+
+Una riga per livello (estero totale / ripartizione) per ogni rilevazione:
+
+```
+livello, cod_rip, desc_rip, elettori_t,
+rilevazione, dt_rilevazione,
+sezioni_perv, sezioni_tot, votanti_t, perc_vot
+```
 
 ### Struttura `affluenza.csv`
 
@@ -161,6 +198,14 @@ FROM read_json_auto('data/20260322/scrutini_flat.jsonl')
 WHERE quesito_cod = 1
 ORDER BY desc_reg, desc_com
 LIMIT 20
+"
+
+# Scrutini estero per nazione
+duckdb -c "
+SELECT desc_rip, desc_naz, elettori_t, votanti_t, perc_vot, voti_si, voti_no, perc_si
+FROM read_csv('data/20260322/scrutini_estero_flat.csv')
+WHERE quesito_cod = 1
+ORDER BY desc_rip, desc_naz
 "
 ```
 
