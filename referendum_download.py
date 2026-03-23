@@ -83,9 +83,9 @@ def export_affluenza(data_elez, province, session, out_file, delay=0.5):
     TIME_LABEL = {1: "12:00", 2: "19:00", 3: "23:00", 4: "finale"}
     FIELDS = [
         "livello", "cod_eligendo", "cod_istat", "cod_reg", "cod_prov", "cod_prov_istat",
-        "denominazione", "elettori_t",
+        "denominazione", "elettori_m", "elettori_f", "elettori_t",
         "rilevazione", "ora", "dt_rilevazione",
-        "sezioni_perv", "sezioni_tot", "votanti_t", "perc_vot",
+        "sezioni_perv", "sezioni_tot", "votanti_m", "votanti_f", "votanti_t", "perc_vot",
     ]
 
     # Carica lookup comuni Eligendo → ISTAT
@@ -106,7 +106,7 @@ def export_affluenza(data_elez, province, session, out_file, delay=0.5):
             for row in _csv.DictReader(lf):
                 lookup_prov[(row["cod_reg"], row["cod_prov_eligendo"])] = row["cod_prov_istat"]
 
-    def make_rows(level, cod_eligendo, cod_reg, cod_prov, desc, ele_t, com_vot):
+    def make_rows(level, cod_eligendo, cod_reg, cod_prov, desc, ele_m, ele_f, ele_t, com_vot):
         rows = []
         if not com_vot:
             return rows
@@ -122,12 +122,16 @@ def export_affluenza(data_elez, province, session, out_file, delay=0.5):
                 "cod_prov": cod_prov,
                 "cod_prov_istat": cod_prov_istat,
                 "denominazione": desc,
+                "elettori_m": ele_m,
+                "elettori_f": ele_f,
                 "elettori_t": ele_t,
                 "rilevazione": com_idx,
                 "ora": TIME_LABEL.get(com_idx, str(com_idx)),
                 "dt_rilevazione": str(cv.get("dt_com", "")),
                 "sezioni_perv": cv.get("enti_p", 0),
                 "sezioni_tot": cv.get("enti_t", 0),
+                "votanti_m": cv.get("vot_m", ""),
+                "votanti_f": cv.get("vot_f", ""),
                 "votanti_t": cv.get("vot_t", 0),
                 "perc_vot": cv.get("perc", ""),
             })
@@ -140,10 +144,10 @@ def export_affluenza(data_elez, province, session, out_file, delay=0.5):
         d = get_votanti(data_elez, session)
         enti = d["enti"]
         ep = enti["ente_p"]
-        all_rows += make_rows("nazionale", "", "", "", ep["desc"], ep["ele_t"], ep.get("com_vot"))
+        all_rows += make_rows("nazionale", "", "", "", ep["desc"], ep.get("ele_m", ""), ep.get("ele_f", ""), ep["ele_t"], ep.get("com_vot"))
         for r in enti.get("enti_f", []):
             cod_reg = f"{r['cod']:02d}"
-            all_rows += make_rows("regione", f"{r['cod']:02d}0000000", cod_reg, "", r["desc"], r["ele_t"], r.get("com_vot"))
+            all_rows += make_rows("regione", f"{r['cod']:02d}0000000", cod_reg, "", r["desc"], r.get("ele_m", ""), r.get("ele_f", ""), r["ele_t"], r.get("com_vot"))
     except RuntimeError as e:
         print(f"  AVVISO votanti nazionale: {e}", file=sys.stderr)
 
@@ -159,12 +163,12 @@ def export_affluenza(data_elez, province, session, out_file, delay=0.5):
             # Provincia
             prov_cod_eligendo = f"{cod_reg}{cod_prov}0000"
             ep = enti_p["ente_p"]
-            all_rows += make_rows("provincia", prov_cod_eligendo, cod_reg, cod_prov, ep["desc"], ep["ele_t"], ep.get("com_vot"))
+            all_rows += make_rows("provincia", prov_cod_eligendo, cod_reg, cod_prov, ep["desc"], ep.get("ele_m", ""), ep.get("ele_f", ""), ep["ele_t"], ep.get("com_vot"))
             # Comuni
             for com in enti_p.get("enti_f", []):
                 cod_com = f"{int(com['cod']):04d}"
                 cod_eligendo = f"{cod_reg}{cod_prov}{cod_com}"
-                all_rows += make_rows("comune", cod_eligendo, cod_reg, cod_prov, com["desc"], com["ele_t"], com.get("com_vot"))
+                all_rows += make_rows("comune", cod_eligendo, cod_reg, cod_prov, com["desc"], com.get("ele_m", ""), com.get("ele_f", ""), com["ele_t"], com.get("com_vot"))
         except RuntimeError as e:
             print(f"  AVVISO {prov['desc']} ({cod_prov}): {e}", file=sys.stderr)
 
