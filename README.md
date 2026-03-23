@@ -4,6 +4,15 @@ CLI Python per scaricare i dati dei referendum italiani da [Eligendo](https://el
 
 Scarica scrutini e affluenza a livello comunale per tutti i comuni italiani, pi√π i dati dell'estero.
 
+## Dati
+
+Referendum del 22 marzo 2026:
+
+| File | Descrizione | Stato |
+|------|-------------|-------|
+| [affluenza.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/affluenza.csv) | Affluenza per comune alle 4 rilevazioni | disponibile |
+| [scrutini_flat.csv](https://raw.githubusercontent.com/ondata/referendum-download/main/data/20260322/scrutini_flat.csv) | Scrutini per comune per quesito | non ancora disponibili |
+
 ## Requisiti
 
 - Python >= 3.9
@@ -12,7 +21,7 @@ Scarica scrutini e affluenza a livello comunale per tutti i comuni italiani, pi√
 ## Installazione
 
 ```bash
-git clone https://github.com/aborruso/referendum-download.git
+git clone https://github.com/ondata/referendum-download.git
 cd referendum-download
 uv venv .venv
 source .venv/bin/activate
