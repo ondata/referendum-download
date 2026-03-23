@@ -72,6 +72,18 @@ def get_scrutini_estero(data_elez, session):
     return api_get(f"scrutiniFE/DE/{data_elez}/TE/09", session)
 
 
+def decode_cod_estero(cod):
+    """Decodifica il codice nazione da getentiFE: cod='{ER}{NA:03d}' es. '2263' → (er=2, na=263)."""
+    er = int(cod[0])
+    na = int(cod[1:])
+    return er, na
+
+
+def get_scrutini_estero_nazione(data_elez, er, na, session):
+    """Scarica scrutini per una singola nazione estero."""
+    return api_get(f"scrutiniFE/DE/{data_elez}/TE/09/SK/01/ER/{er:02d}/NA/{na}", session)
+
+
 def get_scrutini_regione(data_elez, cod_reg, session):
     """Scarica scrutini per una singola regione."""
     return api_get(f"scrutiniFI/DE/{data_elez}/TE/09/RE/{cod_reg}", session)
@@ -90,6 +102,11 @@ def get_votanti(data_elez, session):
 def get_votanti_provincia(data_elez, cod_prov, session):
     """Scarica affluenza comunale per una provincia (cod_prov = 3 cifre Eligendo)."""
     return api_get(f"votantiFI/DE/{data_elez}/TE/09/SK/01/PR/{cod_prov}", session)
+
+
+def get_votanti_estero(data_elez, session):
+    """Scarica affluenza estero per ripartizione."""
+    return api_get(f"votantiFE/DE/{data_elez}/TE/09", session)
 
 
 def export_affluenza(data_elez, province, session, out_file, delay=0.5):
@@ -319,6 +336,180 @@ def export_flat(scrutini_file, flat_file):
                 fout.write(json.dumps(row, ensure_ascii=False) + "\n")
                 count += 1
     return count
+
+
+def flatten_record_estero(record):
+    """Appiattisce un record scrutini estero nazione: una riga per quesito."""
+    rows = []
+    api = record["data"]
+    info = api["int"]
+
+    base = {
+        "cod": record["cod"],
+        "livello": record.get("livello", ""),
+        "cod_rip": info.get("cod_rip", ""),
+        "desc_rip": info.get("desc_rip", ""),
+        "cod_naz": info.get("cod_naz", ""),
+        "desc_naz": info.get("desc_naz", ""),
+        "elettori_t": info.get("ele_t", ""),
+        "sezioni_tot": info.get("sz_tot", ""),
+    }
+
+    for scheda in api.get("scheda", []):
+        row = dict(base)
+        row.update({
+            "quesito_cod": scheda["cod"],
+            "sezioni_perv": scheda.get("sz_perv", ""),
+            "votanti_t": scheda.get("vot_t", ""),
+            "perc_vot": scheda.get("perc_vot", ""),
+            "sk_bianche": scheda.get("sk_bianche", ""),
+            "sk_nulle": scheda.get("sk_nulle", ""),
+            "sk_contestate": scheda.get("sk_contestate", ""),
+            "voti_si": scheda.get("voti_si", ""),
+            "voti_no": scheda.get("voti_no", ""),
+            "perc_si": scheda.get("perc_si", ""),
+            "perc_no": scheda.get("perc_no", ""),
+        })
+        rows.append(row)
+
+    return rows
+
+
+def export_flat_estero(scrutini_file, flat_file):
+    """Legge scrutini_estero.jsonl e produce scrutini_estero_flat.jsonl."""
+    count = 0
+    with open(scrutini_file) as fin, open(flat_file, "w") as fout:
+        for line in fin:
+            record = json.loads(line)
+            for row in flatten_record_estero(record):
+                fout.write(json.dumps(row, ensure_ascii=False) + "\n")
+                count += 1
+    return count
+
+
+def export_scrutini_estero_nazioni(data_elez, nazioni, session, out_file, workers=4, delay=1.0):
+    """Scarica scrutini per ogni nazione estero e salva in out_file (JSONL)."""
+
+    def fetch_nazione(nazione):
+        er, na = decode_cod_estero(nazione["cod"])
+        result = nazione, get_scrutini_estero_nazione(data_elez, er, na, session)
+        if delay > 0:
+            time.sleep(delay)
+        return result
+
+    # Resume: leggi cod già scaricati
+    existing_cods = set()
+    if os.path.exists(out_file):
+        with open(out_file) as f:
+            for line in f:
+                try:
+                    rec = json.loads(line)
+                    if rec.get("cod"):
+                        existing_cods.add(rec["cod"])
+                except json.JSONDecodeError:
+                    pass
+
+    nazioni_da_scaricare = [n for n in nazioni if n["cod"] not in existing_cods]
+    if existing_cods:
+        print(f"  Resume: {len(existing_cods)} nazioni già presenti, {len(nazioni_da_scaricare)} da scaricare")
+
+    if not nazioni_da_scaricare:
+        print(f"Scrutini estero già completi: {out_file} — skip")
+        return len(existing_cods)
+
+    results = {}
+    errors = 0
+    completed = 0
+    print(f"  Scarico scrutini per {len(nazioni_da_scaricare)} nazioni con {workers} worker (delay {delay}s)...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+        future_to_idx = {executor.submit(fetch_nazione, n): i for i, n in enumerate(nazioni_da_scaricare)}
+        for future in concurrent.futures.as_completed(future_to_idx):
+            idx = future_to_idx[future]
+            completed += 1
+            try:
+                nazione, data = future.result()
+                results[idx] = (nazione, data)
+            except Exception as e:
+                nazione = nazioni_da_scaricare[idx]
+                print(f"  ERRORE {nazione['desc']} ({nazione['cod']}): {e}", file=sys.stderr)
+                errors += 1
+            if completed % 20 == 0 or completed == len(nazioni_da_scaricare):
+                print(f"  [{completed}/{len(nazioni_da_scaricare)}]")
+
+    file_mode = "a" if existing_cods else "w"
+    written = len(existing_cods)
+    with open(out_file, file_mode) as f:
+        for i in range(len(nazioni_da_scaricare)):
+            if i in results:
+                nazione, data = results[i]
+                er, na = decode_cod_estero(nazione["cod"])
+                record = {
+                    "livello": "nazione",
+                    "area": "estero",
+                    "cod": nazione["cod"],
+                    "cod_rip": er,
+                    "cod_naz": na,
+                    "desc": nazione["desc"],
+                    "data": data,
+                }
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                written += 1
+
+    if errors:
+        print(f"  Errori: {errors}")
+    return written
+
+
+def export_affluenza_estero(data_elez, session, out_file):
+    """Salva affluenza_estero.csv con righe per livello estero e ripartizione."""
+    import csv
+
+    FIELDS = [
+        "livello", "cod_rip", "desc_rip",
+        "elettori_t", "rilevazione", "dt_rilevazione",
+        "sezioni_perv", "sezioni_tot", "votanti_t", "perc_vot",
+    ]
+
+    d = get_votanti_estero(data_elez, session)
+    # votantiFE ha scheda[]; prendiamo SK/01 (indice 0)
+    enti = d["scheda"][0]["enti"]
+
+    rows = []
+    ep = enti["ente_p"]
+    for cv in ep.get("com_vot", []):
+        rows.append({
+            "livello": "estero",
+            "cod_rip": "",
+            "desc_rip": ep.get("desc", "ESTERO"),
+            "elettori_t": ep.get("ele_t", ""),
+            "rilevazione": cv.get("com", ""),
+            "dt_rilevazione": str(cv.get("dt_com", "")),
+            "sezioni_perv": cv.get("enti_p", ""),
+            "sezioni_tot": cv.get("enti_t", ""),
+            "votanti_t": cv.get("vot_t", ""),
+            "perc_vot": cv.get("perc", ""),
+        })
+
+    for rip in enti.get("enti_f", []):
+        for cv in rip.get("com_vot", []):
+            rows.append({
+                "livello": "ripartizione",
+                "cod_rip": rip.get("cod", ""),
+                "desc_rip": rip.get("desc", ""),
+                "elettori_t": rip.get("ele_t", ""),
+                "rilevazione": cv.get("com", ""),
+                "dt_rilevazione": str(cv.get("dt_com", "")),
+                "sezioni_perv": cv.get("enti_p", ""),
+                "sezioni_tot": cv.get("enti_t", ""),
+                "votanti_t": cv.get("vot_t", ""),
+                "perc_vot": cv.get("perc", ""),
+            })
+
+    with open(out_file, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    return len(rows)
 
 
 def main():
@@ -585,6 +776,56 @@ def main():
             print("\nScarico affluenza per comune...")
             aff_count = export_affluenza(data_elez, province, session, affluenza_file, delay=args.delay)
             print(f"  {aff_count} righe scritte in {affluenza_file}")
+
+    # 5. Entità estero
+    enti_estero_file = os.path.join(out_dir, "enti_estero.jsonl")
+    if not args.force and os.path.exists(enti_estero_file) and os.path.getsize(enti_estero_file) > 0:
+        print(f"Entità estero già presenti: {enti_estero_file} — skip")
+        enti_estero = []
+        with open(enti_estero_file) as f:
+            for line in f:
+                enti_estero.append(json.loads(line))
+    else:
+        print(f"Scarico entità estero...")
+        enti_estero_data = get_enti_estero(data_elez, session)
+        enti_estero = enti_estero_data["enti"]
+        with open(enti_estero_file, "w") as f:
+            for e in enti_estero:
+                f.write(json.dumps(e, ensure_ascii=False) + "\n")
+        print(f"  {len(enti_estero)} entità estero salvate in {enti_estero_file}")
+
+    nazioni = [e for e in enti_estero if e["tipo"] == "NA"]
+    print(f"  {len(nazioni)} nazioni estero")
+
+    # 6. Scrutini per nazione estero
+    if not args.solo_affluenza:
+        scrutini_estero_file = os.path.join(out_dir, "scrutini_estero.jsonl")
+        written_estero = export_scrutini_estero_nazioni(
+            data_elez, nazioni, session, scrutini_estero_file,
+            workers=args.workers, delay=0,
+        )
+        if written_estero:
+            print(f"\nCompletato: {written_estero} nazioni scritte in {scrutini_estero_file}")
+            flat_estero_jsonl = os.path.join(out_dir, "scrutini_estero_flat.jsonl")
+            flat_estero_csv = os.path.join(out_dir, "scrutini_estero_flat.csv")
+            print("Genero export flat estero...")
+            flat_count = export_flat_estero(scrutini_estero_file, flat_estero_jsonl)
+            print(f"  {flat_count} righe scritte in {flat_estero_jsonl}")
+            jsonl_to_csv(flat_estero_jsonl, flat_estero_csv)
+            print(f"  {flat_count} righe scritte in {flat_estero_csv}")
+
+    # 7. Affluenza estero
+    if not args.solo_scrutini:
+        affluenza_estero_file = os.path.join(out_dir, "affluenza_estero.csv")
+        if not args.force and os.path.exists(affluenza_estero_file) and os.path.getsize(affluenza_estero_file) > 0:
+            print(f"Affluenza estero già presente: {affluenza_estero_file} — skip (usa --force per riscaricare)")
+        else:
+            print("\nScarico affluenza estero...")
+            try:
+                aff_estero_count = export_affluenza_estero(data_elez, session, affluenza_estero_file)
+                print(f"  {aff_estero_count} righe scritte in {affluenza_estero_file}")
+            except Exception as e:
+                print(f"  ERRORE affluenza estero: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

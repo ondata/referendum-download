@@ -2,6 +2,12 @@
 
 ## 2026-03-23
 
+- Aggiunto download dati estero: `enti_estero.jsonl`, `scrutini_estero.jsonl`, `scrutini_estero_flat.jsonl/csv`, `affluenza_estero.csv`
+- Scrutini per singola nazione via `scrutiniFE/.../SK/01/ER/{er}/NA/{na}`; 181 nazioni in ~5s con delay=0 e 4 worker
+- Aggiornato `docs/api-reference.md` con endpoint estero (scrutini per nazione/ripartizione, votantiFE, pattern URL)
+
+
+
 - Aggiunto retry automatico in `api_get` (2 tentativi, delay 5s) per errori di rete (`ConnectionError`, `Timeout`); i 404 non vengono retrati
 - Aggiunto meccanismo resume/append per scrutini `--livello cm`: se `scrutini.jsonl` esiste, legge i `cod` già presenti, salta quelli e fa append dei nuovi; rieseguire lo script completa automaticamente i comuni mancanti
 

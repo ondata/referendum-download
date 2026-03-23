@@ -1,0 +1,185 @@
+{"cod": "1000", "desc": "EUROPA", "tipo": "ER", "dt_agg": 20260323224534}
+{"cod": "1220", "desc": "ALBANIA", "tipo": "NA", "dt_agg": 20260323210724}
+{"cod": "1221", "desc": "ANDORRA", "tipo": "NA", "dt_agg": 20260323172825}
+{"cod": "1222", "desc": "AUSTRIA", "tipo": "NA", "dt_agg": 20260323204428}
+{"cod": "1223", "desc": "BELGIO", "tipo": "NA", "dt_agg": 20260323210650}
+{"cod": "1224", "desc": "BULGARIA", "tipo": "NA", "dt_agg": 20260323164849}
+{"cod": "1225", "desc": "REPUBBLICA CECA", "tipo": "NA", "dt_agg": 20260323180735}
+{"cod": "1226", "desc": "STATO CITTA' DEL VATICANO", "tipo": "NA", "dt_agg": 20260323203840}
+{"cod": "1227", "desc": "DANIMARCA", "tipo": "NA", "dt_agg": 20260323220848}
+{"cod": "1228", "desc": "FINLANDIA", "tipo": "NA", "dt_agg": 20260323203840}
+{"cod": "1229", "desc": "FRANCIA", "tipo": "NA", "dt_agg": 20260323224534}
+{"cod": "1230", "desc": "GERMANIA", "tipo": "NA", "dt_agg": 20260323212616}
+{"cod": "1231", "desc": "REGNO UNITO", "tipo": "NA", "dt_agg": 20260323222851}
+{"cod": "1232", "desc": "GRECIA", "tipo": "NA", "dt_agg": 20260323204806}
+{"cod": "1233", "desc": "IRLANDA", "tipo": "NA", "dt_agg": 20260323212838}
+{"cod": "1234", "desc": "ISLANDA", "tipo": "NA", "dt_agg": 20260323180542}
+{"cod": "1236", "desc": "SERBIA", "tipo": "NA", "dt_agg": 20260323190748}
+{"cod": "1237", "desc": "LIECHTENSTEIN", "tipo": "NA", "dt_agg": 20260323190703}
+{"cod": "1238", "desc": "LUSSEMBURGO", "tipo": "NA", "dt_agg": 20260323203633}
+{"cod": "1239", "desc": "MALTA", "tipo": "NA", "dt_agg": 20260323184821}
+{"cod": "1240", "desc": "MONACO", "tipo": "NA", "dt_agg": 20260323201222}
+{"cod": "1241", "desc": "NORVEGIA", "tipo": "NA", "dt_agg": 20260323193541}
+{"cod": "1242", "desc": "PAESI BASSI", "tipo": "NA", "dt_agg": 20260323213613}
+{"cod": "1243", "desc": "POLONIA", "tipo": "NA", "dt_agg": 20260323204546}
+{"cod": "1244", "desc": "PORTOGALLO", "tipo": "NA", "dt_agg": 20260323210414}
+{"cod": "1245", "desc": "ROMANIA", "tipo": "NA", "dt_agg": 20260323184758}
+{"cod": "1246", "desc": "SAN MARINO", "tipo": "NA", "dt_agg": 20260323210611}
+{"cod": "1248", "desc": "SPAGNA", "tipo": "NA", "dt_agg": 20260323210522}
+{"cod": "1249", "desc": "SVEZIA", "tipo": "NA", "dt_agg": 20260323205416}
+{"cod": "1250", "desc": "SVIZZERA", "tipo": "NA", "dt_agg": 20260323221308}
+{"cod": "1251", "desc": "UNGHERIA", "tipo": "NA", "dt_agg": 20260323201428}
+{"cod": "1252", "desc": "FEDERAZIONE RUSSA", "tipo": "NA", "dt_agg": 20260323172242}
+{"cod": "1254", "desc": "LITUANIA", "tipo": "NA", "dt_agg": 20260323204431}
+{"cod": "1255", "desc": "LETTONIA", "tipo": "NA", "dt_agg": 20260323193446}
+{"cod": "1256", "desc": "ESTONIA", "tipo": "NA", "dt_agg": 20260323201720}
+{"cod": "1257", "desc": "BIELORUSSIA", "tipo": "NA", "dt_agg": 20260323172440}
+{"cod": "1258", "desc": "UCRAINA", "tipo": "NA", "dt_agg": 20260323183846}
+{"cod": "1259", "desc": "CROAZIA", "tipo": "NA", "dt_agg": 20260323185001}
+{"cod": "1308", "desc": "CIPRO", "tipo": "NA", "dt_agg": 20260323201642}
+{"cod": "1333", "desc": "TURCHIA", "tipo": "NA", "dt_agg": 20260323210825}
+{"cod": "1450", "desc": "SLOVENIA", "tipo": "NA", "dt_agg": 20260323214541}
+{"cod": "1451", "desc": "BOSNIA-ERZEGOVINA", "tipo": "NA", "dt_agg": 20260323193902}
+{"cod": "1452", "desc": "SLOVACCHIA", "tipo": "NA", "dt_agg": 20260323190000}
+{"cod": "1453", "desc": "MACEDONIA DEL NORD", "tipo": "NA", "dt_agg": 20260323185649}
+{"cod": "1458", "desc": "MOLDOVA", "tipo": "NA", "dt_agg": 20260323193800}
+{"cod": "1471", "desc": "MONTENEGRO", "tipo": "NA", "dt_agg": 20260323202137}
+{"cod": "1472", "desc": "KOSOVO", "tipo": "NA", "dt_agg": 20260323190754}
+{"cod": "2000", "desc": "AMERICA MERIDIONALE", "tipo": "ER", "dt_agg": 20260323230517}
+{"cod": "2260", "desc": "ARGENTINA", "tipo": "NA", "dt_agg": 20260323230517}
+{"cod": "2262", "desc": "BOLIVIA", "tipo": "NA", "dt_agg": 20260323225855}
+{"cod": "2263", "desc": "BRASILE", "tipo": "NA", "dt_agg": 20260323223219}
+{"cod": "2265", "desc": "CILE", "tipo": "NA", "dt_agg": 20260323221742}
+{"cod": "2266", "desc": "COLOMBIA", "tipo": "NA", "dt_agg": 20260323221641}
+{"cod": "2271", "desc": "ECUADOR", "tipo": "NA", "dt_agg": 20260323205132}
+{"cod": "2279", "desc": "PARAGUAY", "tipo": "NA", "dt_agg": 20260323200232}
+{"cod": "2280", "desc": "PERU'", "tipo": "NA", "dt_agg": 20260323212019}
+{"cod": "2282", "desc": "TRINIDAD E TOBAGO", "tipo": "NA", "dt_agg": 20260323190341}
+{"cod": "2283", "desc": "URUGUAY", "tipo": "NA", "dt_agg": 20260323221052}
+{"cod": "2284", "desc": "VENEZUELA", "tipo": "NA", "dt_agg": 20260323220516}
+{"cod": "2285", "desc": "GUYANA", "tipo": "NA", "dt_agg": 20260323184742}
+{"cod": "2288", "desc": "SURINAME", "tipo": "NA", "dt_agg": 20260323170355}
+{"cod": "3000", "desc": "AMERICA SETTENTRIONALE E CENTRALE", "tipo": "ER", "dt_agg": 20260323230939}
+{"cod": "3261", "desc": "BAHAMAS", "tipo": "NA", "dt_agg": 20260323194724}
+{"cod": "3264", "desc": "CANADA", "tipo": "NA", "dt_agg": 20260323230939}
+{"cod": "3267", "desc": "COSTA RICA", "tipo": "NA", "dt_agg": 20260323195851}
+{"cod": "3268", "desc": "CUBA", "tipo": "NA", "dt_agg": null}
+{"cod": "3269", "desc": "REPUBBLICA DOMINICANA", "tipo": "NA", "dt_agg": 20260323221456}
+{"cod": "3270", "desc": "EL SALVADOR", "tipo": "NA", "dt_agg": 20260323204903}
+{"cod": "3272", "desc": "GIAMAICA", "tipo": "NA", "dt_agg": 20260323204727}
+{"cod": "3273", "desc": "GUATEMALA", "tipo": "NA", "dt_agg": 20260323205035}
+{"cod": "3275", "desc": "HONDURAS", "tipo": "NA", "dt_agg": 20260323221231}
+{"cod": "3276", "desc": "MESSICO", "tipo": "NA", "dt_agg": 20260323214158}
+{"cod": "3277", "desc": "NICARAGUA", "tipo": "NA", "dt_agg": 20260323221204}
+{"cod": "3278", "desc": "PANAMA", "tipo": "NA", "dt_agg": 20260323223103}
+{"cod": "3281", "desc": "STATI UNITI D'AMERICA", "tipo": "NA", "dt_agg": 20260323224043}
+{"cod": "3286", "desc": "BARBADOS", "tipo": "NA", "dt_agg": 20260323195801}
+{"cod": "3287", "desc": "BELIZE", "tipo": "NA", "dt_agg": 20260323154033}
+{"cod": "3289", "desc": "GRENADA", "tipo": "NA", "dt_agg": 20260323204903}
+{"cod": "3294", "desc": "ANTIGUA E BARBUDA", "tipo": "NA", "dt_agg": 20260323184615}
+{"cod": "3295", "desc": "SAINT LUCIA", "tipo": "NA", "dt_agg": 20260323221456}
+{"cod": "3296", "desc": "SAINT VINCENT E GRENADINE", "tipo": "NA", "dt_agg": 20260323221131}
+{"cod": "3297", "desc": "SAINT KITTS E NEVIS", "tipo": "NA", "dt_agg": 20260323163817}
+{"cod": "4000", "desc": "AFRICA, ASIA, OCEANIA E ANTARTIDE", "tipo": "ER", "dt_agg": 20260323231003}
+{"cod": "4290", "desc": "SAMOA", "tipo": "NA", "dt_agg": 20260323211057}
+{"cod": "4291", "desc": "TONGA", "tipo": "NA", "dt_agg": 20260323230437}
+{"cod": "4292", "desc": "VANUATU", "tipo": "NA", "dt_agg": 20260323194134}
+{"cod": "4301", "desc": "ARABIA SAUDITA", "tipo": "NA", "dt_agg": 20260323204747}
+{"cod": "4302", "desc": "AUSTRALIA", "tipo": "NA", "dt_agg": 20260323230600}
+{"cod": "4304", "desc": "MYANMAR", "tipo": "NA", "dt_agg": 20260323200154}
+{"cod": "4305", "desc": "CAMBOGIA", "tipo": "NA", "dt_agg": 20260323213923}
+{"cod": "4306", "desc": "SRI LANKA", "tipo": "NA", "dt_agg": 20260323200011}
+{"cod": "4307", "desc": "REPUBBLICA POPOLARE CINESE", "tipo": "NA", "dt_agg": 20260323221328}
+{"cod": "4309", "desc": "REPUBBLICA DI COREA", "tipo": "NA", "dt_agg": 20260323185053}
+{"cod": "4310", "desc": "FILIPPINE", "tipo": "NA", "dt_agg": 20260323213717}
+{"cod": "4311", "desc": "GIAPPONE", "tipo": "NA", "dt_agg": 20260323221828}
+{"cod": "4312", "desc": "GIORDANIA", "tipo": "NA", "dt_agg": 20260323193953}
+{"cod": "4313", "desc": "INDIA", "tipo": "NA", "dt_agg": 20260323223435}
+{"cod": "4314", "desc": "INDONESIA", "tipo": "NA", "dt_agg": 20260323211202}
+{"cod": "4316", "desc": "IRAQ", "tipo": "NA", "dt_agg": 20260323222138}
+{"cod": "4317", "desc": "ISRAELE", "tipo": "NA", "dt_agg": 20260323194322}
+{"cod": "4318", "desc": "KUWAIT", "tipo": "NA", "dt_agg": null}
+{"cod": "4319", "desc": "LAOS", "tipo": "NA", "dt_agg": 20260323194516}
+{"cod": "4320", "desc": "LIBANO", "tipo": "NA", "dt_agg": 20260323195914}
+{"cod": "4321", "desc": "MALAYSIA", "tipo": "NA", "dt_agg": 20260323210844}
+{"cod": "4322", "desc": "MONGOLIA", "tipo": "NA", "dt_agg": 20260323210956}
+{"cod": "4323", "desc": "NEPAL", "tipo": "NA", "dt_agg": 20260323221354}
+{"cod": "4324", "desc": "NUOVA ZELANDA", "tipo": "NA", "dt_agg": 20260323211005}
+{"cod": "4325", "desc": "OMAN", "tipo": "NA", "dt_agg": 20260323200107}
+{"cod": "4326", "desc": "PAKISTAN", "tipo": "NA", "dt_agg": 20260323200254}
+{"cod": "4327", "desc": "QATAR", "tipo": "NA", "dt_agg": 20260323211249}
+{"cod": "4329", "desc": "SINGAPORE", "tipo": "NA", "dt_agg": 20260323213506}
+{"cod": "4330", "desc": "SIRIA", "tipo": "NA", "dt_agg": 20260323221500}
+{"cod": "4331", "desc": "THAILANDIA", "tipo": "NA", "dt_agg": 20260323200005}
+{"cod": "4337", "desc": "VIETNAM", "tipo": "NA", "dt_agg": 20260323190404}
+{"cod": "4338", "desc": "BANGLADESH", "tipo": "NA", "dt_agg": 20260323213411}
+{"cod": "4339", "desc": "FIGI", "tipo": "NA", "dt_agg": 20260323223141}
+{"cod": "4340", "desc": "EMIRATI ARABI UNITI", "tipo": "NA", "dt_agg": 20260323231003}
+{"cod": "4341", "desc": "BAHREIN", "tipo": "NA", "dt_agg": null}
+{"cod": "4342", "desc": "MALDIVE", "tipo": "NA", "dt_agg": 20260323194503}
+{"cod": "4343", "desc": "PAPUA NUOVA GUINEA", "tipo": "NA", "dt_agg": 20260323221500}
+{"cod": "4344", "desc": "ISOLE SALOMONE", "tipo": "NA", "dt_agg": 20260323185155}
+{"cod": "4345", "desc": "TAIWAN", "tipo": "NA", "dt_agg": 20260323221323}
+{"cod": "4348", "desc": "KAZAKHSTAN", "tipo": "NA", "dt_agg": 20260323194142}
+{"cod": "4349", "desc": "UZBEKISTAN", "tipo": "NA", "dt_agg": 20260323194201}
+{"cod": "4350", "desc": "ALGERIA", "tipo": "NA", "dt_agg": 20260323194038}
+{"cod": "4351", "desc": "BURKINA FASO", "tipo": "NA", "dt_agg": 20260323200005}
+{"cod": "4352", "desc": "BURUNDI", "tipo": "NA", "dt_agg": 20260323221603}
+{"cod": "4353", "desc": "CAMERUN", "tipo": "NA", "dt_agg": 20260323223447}
+{"cod": "4355", "desc": "CONGO", "tipo": "NA", "dt_agg": 20260323190431}
+{"cod": "4356", "desc": "REPUBBLICA DEMOCRATICA DEL CONGO", "tipo": "NA", "dt_agg": 20260323213603}
+{"cod": "4357", "desc": "COSTA D'AVORIO", "tipo": "NA", "dt_agg": null}
+{"cod": "4358", "desc": "BENIN", "tipo": "NA", "dt_agg": 20260323213645}
+{"cod": "4359", "desc": "ETIOPIA", "tipo": "NA", "dt_agg": 20260323213515}
+{"cod": "4360", "desc": "GABON", "tipo": "NA", "dt_agg": 20260323194415}
+{"cod": "4361", "desc": "GAMBIA", "tipo": "NA", "dt_agg": 20260323210937}
+{"cod": "4362", "desc": "GHANA", "tipo": "NA", "dt_agg": 20260323223052}
+{"cod": "4363", "desc": "GUINEA", "tipo": "NA", "dt_agg": 20260323211052}
+{"cod": "4364", "desc": "KENYA", "tipo": "NA", "dt_agg": 20260323200630}
+{"cod": "4366", "desc": "LIBIA", "tipo": "NA", "dt_agg": 20260323231003}
+{"cod": "4367", "desc": "MADAGASCAR", "tipo": "NA", "dt_agg": 20260323194711}
+{"cod": "4368", "desc": "MALAWI", "tipo": "NA", "dt_agg": 20260323194612}
+{"cod": "4369", "desc": "MALI", "tipo": "NA", "dt_agg": 20260323200054}
+{"cod": "4370", "desc": "MAROCCO", "tipo": "NA", "dt_agg": 20260323221414}
+{"cod": "4371", "desc": "MAURITANIA", "tipo": "NA", "dt_agg": 20260323211057}
+{"cod": "4372", "desc": "NIGER", "tipo": "NA", "dt_agg": 20260323230357}
+{"cod": "4373", "desc": "NIGERIA", "tipo": "NA", "dt_agg": 20260323200003}
+{"cod": "4374", "desc": "EGITTO", "tipo": "NA", "dt_agg": 20260323194008}
+{"cod": "4376", "desc": "ZIMBABWE", "tipo": "NA", "dt_agg": 20260323173148}
+{"cod": "4377", "desc": "RUANDA", "tipo": "NA", "dt_agg": 20260323213527}
+{"cod": "4378", "desc": "SENEGAL", "tipo": "NA", "dt_agg": 20260323223410}
+{"cod": "4380", "desc": "SOMALIA", "tipo": "NA", "dt_agg": 20260323221306}
+{"cod": "4381", "desc": "SUD AFRICA", "tipo": "NA", "dt_agg": 20260323223126}
+{"cod": "4382", "desc": "SUDAN", "tipo": "NA", "dt_agg": 20260323172646}
+{"cod": "4383", "desc": "TANZANIA", "tipo": "NA", "dt_agg": 20260323184952}
+{"cod": "4384", "desc": "TOGO", "tipo": "NA", "dt_agg": 20260323190431}
+{"cod": "4385", "desc": "TUNISIA", "tipo": "NA", "dt_agg": 20260323211122}
+{"cod": "4386", "desc": "UGANDA", "tipo": "NA", "dt_agg": 20260323205740}
+{"cod": "4387", "desc": "ZAMBIA", "tipo": "NA", "dt_agg": 20260323230903}
+{"cod": "4388", "desc": "NAMIBIA", "tipo": "NA", "dt_agg": 20260323221455}
+{"cod": "4389", "desc": "BOTSWANA", "tipo": "NA", "dt_agg": 20260323213146}
+{"cod": "4390", "desc": "MAURITIUS", "tipo": "NA", "dt_agg": 20260323185107}
+{"cod": "4391", "desc": "GUINEA EQUATORIALE", "tipo": "NA", "dt_agg": 20260323210828}
+{"cod": "4392", "desc": "MOZAMBICO", "tipo": "NA", "dt_agg": 20260323194101}
+{"cod": "4393", "desc": "ANGOLA", "tipo": "NA", "dt_agg": 20260323205501}
+{"cod": "4394", "desc": "COMORE", "tipo": "NA", "dt_agg": 20260323163943}
+{"cod": "4395", "desc": "GIBUTI", "tipo": "NA", "dt_agg": 20260323221624}
+{"cod": "4396", "desc": "SEYCHELLES", "tipo": "NA", "dt_agg": 20260323200049}
+{"cod": "4397", "desc": "CAPO VERDE", "tipo": "NA", "dt_agg": 20260323223029}
+{"cod": "4398", "desc": "GUINEA BISSAU", "tipo": "NA", "dt_agg": 20260323205426}
+{"cod": "4399", "desc": "ESWATINI", "tipo": "NA", "dt_agg": 20260323221306}
+{"cod": "4400", "desc": "SAO TOME' E PRINCIPE", "tipo": "NA", "dt_agg": 20260323221555}
+{"cod": "4401", "desc": "LESOTHO", "tipo": "NA", "dt_agg": 20260323211052}
+{"cod": "4402", "desc": "ERITREA", "tipo": "NA", "dt_agg": 20260323175103}
+{"cod": "4454", "desc": "ARMENIA", "tipo": "NA", "dt_agg": 20260323205721}
+{"cod": "4455", "desc": "AZERBAIGIAN", "tipo": "NA", "dt_agg": 20260323213312}
+{"cod": "4456", "desc": "GEORGIA", "tipo": "NA", "dt_agg": 20260323194043}
+{"cod": "4457", "desc": "KIRGHIZISTAN", "tipo": "NA", "dt_agg": 20260323210138}
+{"cod": "4459", "desc": "TAGIKISTAN", "tipo": "NA", "dt_agg": 20260323180014}
+{"cod": "4460", "desc": "TURKMENISTAN", "tipo": "NA", "dt_agg": 20260323194359}
+{"cod": "4461", "desc": "BRUNEI", "tipo": "NA", "dt_agg": 20260323214022}
+{"cod": "4463", "desc": "ISOLE MARSHALL", "tipo": "NA", "dt_agg": 20260323164245}
+{"cod": "4464", "desc": "STATI FEDERATI DI MICRONESIA", "tipo": "NA", "dt_agg": 20260323221216}
+{"cod": "4466", "desc": "PALAU", "tipo": "NA", "dt_agg": 20260323165323}
+{"cod": "4468", "desc": "TIMOR ORIENTALE", "tipo": "NA", "dt_agg": 20260323164949}
+{"cod": "4888", "desc": "CIRCOSCRIZIONE AUTONOMA", "tipo": "NA", "dt_agg": 20260323183019}
