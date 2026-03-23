@@ -82,13 +82,13 @@ def export_affluenza(data_elez, province, session, out_file, delay=0.5):
 
     TIME_LABEL = {1: "12:00", 2: "19:00", 3: "23:00", 4: "finale"}
     FIELDS = [
-        "livello", "cod_eligendo", "cod_istat", "cod_reg", "cod_prov",
+        "livello", "cod_eligendo", "cod_istat", "cod_reg", "cod_prov", "cod_prov_istat",
         "denominazione", "elettori_t",
         "rilevazione", "ora", "dt_rilevazione",
         "sezioni_perv", "sezioni_tot", "votanti_t", "perc_vot",
     ]
 
-    # Carica lookup Eligendo → ISTAT (opzionale: se il file non esiste va avanti senza)
+    # Carica lookup comuni Eligendo → ISTAT
     lookup = {}
     lookup_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lookup", "lookup_eligendo_istat.csv")
     if os.path.exists(lookup_file):
@@ -97,11 +97,21 @@ def export_affluenza(data_elez, province, session, out_file, delay=0.5):
             for row in _csv.DictReader(lf):
                 lookup[row["cod_eligendo"]] = row["cod_istat"]
 
+    # Carica lookup province Eligendo → ISTAT: chiave = (cod_reg, cod_prov_eligendo)
+    lookup_prov = {}
+    lookup_prov_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lookup", "lookup_province_eligendo_istat.csv")
+    if os.path.exists(lookup_prov_file):
+        import csv as _csv
+        with open(lookup_prov_file) as lf:
+            for row in _csv.DictReader(lf):
+                lookup_prov[(row["cod_reg"], row["cod_prov_eligendo"])] = row["cod_prov_istat"]
+
     def make_rows(level, cod_eligendo, cod_reg, cod_prov, desc, ele_t, com_vot):
         rows = []
         if not com_vot:
             return rows
         cod_istat = lookup.get(cod_eligendo, "")
+        cod_prov_istat = lookup_prov.get((cod_reg, cod_prov), "")
         for cv in com_vot:
             com_idx = cv.get("com")
             rows.append({
@@ -110,6 +120,7 @@ def export_affluenza(data_elez, province, session, out_file, delay=0.5):
                 "cod_istat": cod_istat,
                 "cod_reg": cod_reg,
                 "cod_prov": cod_prov,
+                "cod_prov_istat": cod_prov_istat,
                 "denominazione": desc,
                 "elettori_t": ele_t,
                 "rilevazione": com_idx,
@@ -257,7 +268,7 @@ def jsonl_to_csv(jsonl_file, csv_file):
 
 def export_flat(scrutini_file, flat_file):
     """Legge scrutini.jsonl e produce scrutini_flat.jsonl (una riga per comune per quesito)."""
-    # Carica lookup Eligendo → ISTAT
+    # Carica lookup comuni Eligendo → ISTAT
     lookup = {}
     lookup_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lookup", "lookup_eligendo_istat.csv")
     if os.path.exists(lookup_file):
@@ -266,12 +277,22 @@ def export_flat(scrutini_file, flat_file):
             for row in csv.DictReader(lf):
                 lookup[row["cod_eligendo"]] = row["cod_istat"]
 
+    # Carica lookup province Eligendo → ISTAT: chiave = (cod_reg, cod_prov_eligendo)
+    lookup_prov = {}
+    lookup_prov_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lookup", "lookup_province_eligendo_istat.csv")
+    if os.path.exists(lookup_prov_file):
+        import csv
+        with open(lookup_prov_file) as lf:
+            for row in csv.DictReader(lf):
+                lookup_prov[(row["cod_reg"], row["cod_prov_eligendo"])] = row["cod_prov_istat"]
+
     count = 0
     with open(scrutini_file) as fin, open(flat_file, "w") as fout:
         for line in fin:
             record = json.loads(line)
             for row in flatten_record(record):
                 row["cod_istat"] = lookup.get(row.get("cod", ""), "")
+                row["cod_prov_istat"] = lookup_prov.get((row.get("cod_reg", ""), row.get("cod_prov", "")), "")
                 fout.write(json.dumps(row, ensure_ascii=False) + "\n")
                 count += 1
     return count

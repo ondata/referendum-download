@@ -1,5 +1,11 @@
 # LOG
 
+## 2026-03-23
+
+- Aggiunta `lookup/lookup_province_eligendo_istat.csv`: 110 province, mapping deterministico da lookup comuni (no fuzzy)
+  - Colonne: `cod_reg`, `cod_prov_eligendo`, `cod_prov_istat`, `regione`, `provincia`
+  - Derivato estraendo `cod_eligendo[3:5]` → `cod_prov_eligendo` e `cod_istat[1:3]` → `cod_prov_istat`
+
 ## 2026-03-22
 
 - Export `scrutini_flat.csv` generato automaticamente dopo `scrutini_flat.jsonl`
