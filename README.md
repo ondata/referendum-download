@@ -264,6 +264,21 @@ referendum-download --force 20260322           # tutto
 referendum-download --force --solo-affluenza 20260322  # solo affluenza
 ```
 
+## Mappa bivariata
+
+Lo script [`mappe/bivariate/bivariate_map.py`](mappe/bivariate/bivariate_map.py) genera una **mappa choropleth bivariata** che incrocia simultaneamente due variabili per comune:
+
+- **% Sì** (asse orizzontale): quota di voti favorevoli sul totale dei voti validi
+- **% Affluenza** (asse verticale): quota di votanti sul corpo elettorale
+
+La lettura incrociata permette di distinguere, ad esempio, i comuni dove il Sì è alto *e* l'affluenza è alta (colore scuro blu-viola) da quelli dove il Sì è alto ma l'affluenza è bassa (teal), o viceversa. La palette è ispirata allo schema Stevens teal × pink/violet.
+
+L'immagine sotto usa **4 classi** (quartili); lo script di default usa **5 classi** (quintili), configurabile tramite `N = 5` nella sezione CONFIG.
+
+![Mappa bivariata % Sì × % Affluenza per comune (quartili)](mappe/bivariate/bivariate_si_affluenza_4cl.png)
+
+Per la documentazione completa e le opzioni di personalizzazione (numero di classi, filtro regionale, palette) vedi [`mappe/bivariate/README.md`](mappe/bivariate/README.md).
+
 ## Note
 
 - L'API `eleapi.interno.gov.it` serve solo tornate recenti/attive, non dati storici
