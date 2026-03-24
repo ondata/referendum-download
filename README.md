@@ -279,9 +279,3 @@ L'immagine sotto usa **4 classi** (quartili); lo script di default usa **5 class
 
 Per la documentazione completa e le opzioni di personalizzazione (numero di classi, filtro regionale, palette) vedi [`mappe/bivariate/README.md`](mappe/bivariate/README.md).
 
-## Note
-
-- L'API `eleapi.interno.gov.it` serve solo tornate recenti/attive, non dati storici
-- I dati storici sono disponibili come ZIP su [elezionistorico.interno.gov.it](https://elezionistorico.interno.gov.it/eligendo/opendata.php)
-- Con ~7900 comuni e delay 1s, il download scrutini richiede circa 2 ore
-- Con delay 0.3s e 110 province, il download affluenza richiede circa 40 secondi
