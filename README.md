@@ -279,3 +279,7 @@ L'immagine sotto usa **4 classi** (quartili); lo script di default usa **5 class
 
 Per la documentazione completa e le opzioni di personalizzazione (numero di classi, filtro regionale, palette) vedi [`mappe/bivariate/README.md`](mappe/bivariate/README.md).
 
+## Chi ha usato questi dati
+
+- Raffaele Mastrolonardo, Sky TG24 — [Referendum sulla giustizia, la vittoria del No raccontata in 3 mappe](https://tg24.sky.it/politica/2026/03/23/referendum-giustizia-risultati-dati) (23 marzo 2026)
+- Raffaele Mastrolonardo, Sky TG24 — [Referendum sulla giustizia, l'affluenza raccontata in 3 grafici](https://tg24.sky.it/politica/2026/03/23/referendum-giustizia-affluenza-dati) (23 marzo 2026)
