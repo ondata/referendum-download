@@ -1263,7 +1263,7 @@
 {"cod": "020040710", "desc": "VERRAYES", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323171406, "tipo_tras": "SZ"}
 {"cod": "020040720", "desc": "VERRÈS", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323171406, "tipo_tras": "SZ"}
 {"cod": "020040730", "desc": "VILLENEUVE", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323171406, "tipo_tras": "SZ"}
-{"cod": "030000000", "desc": "LOMBARDIA", "tipo": "RE", "tipo_comune": null, "dt_agg": 20260323202158, "tipo_tras": null}
+{"cod": "030000000", "desc": "LOMBARDIA", "tipo": "RE", "tipo_comune": null, "dt_agg": 20260323211807, "tipo_tras": null}
 {"cod": "030120000", "desc": "BERGAMO", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323184639, "tipo_tras": null}
 {"cod": "030120010", "desc": "ADRARA SAN MARTINO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323155839, "tipo_tras": "SZ"}
 {"cod": "030120020", "desc": "ADRARA SAN ROCCO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323155817, "tipo_tras": "SZ"}
@@ -1508,8 +1508,8 @@
 {"cod": "030122320", "desc": "ZANDOBBIO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323162414, "tipo_tras": "SZ"}
 {"cod": "030122330", "desc": "ZANICA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323181350, "tipo_tras": "SZ"}
 {"cod": "030122340", "desc": "ZOGNO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323165623, "tipo_tras": "SZ"}
-{"cod": "030150000", "desc": "BRESCIA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323184405, "tipo_tras": null}
-{"cod": "030150010", "desc": "ACQUAFREDDA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323172035, "tipo_tras": "SZ"}
+{"cod": "030150000", "desc": "BRESCIA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323211807, "tipo_tras": null}
+{"cod": "030150010", "desc": "ACQUAFREDDA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323211807, "tipo_tras": "SZ"}
 {"cod": "030150020", "desc": "ADRO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323162655, "tipo_tras": "SZ"}
 {"cod": "030150030", "desc": "AGNOSINE", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323160608, "tipo_tras": "SZ"}
 {"cod": "030150040", "desc": "ALFIANELLO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323161149, "tipo_tras": "SZ"}
@@ -2721,7 +2721,7 @@
 {"cod": "030990590", "desc": "VALERA FRATTA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323161049, "tipo_tras": "SZ"}
 {"cod": "030990600", "desc": "VILLANOVA DEL SILLARO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323161955, "tipo_tras": "SZ"}
 {"cod": "030990610", "desc": "ZELO BUON PERSICO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323155439, "tipo_tras": "SZ"}
-{"cod": "031040000", "desc": "MONZA E DELLA BRIANZA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323202158, "tipo_tras": null}
+{"cod": "031040000", "desc": "MONZA E DELLA BRIANZA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323204351, "tipo_tras": null}
 {"cod": "031040010", "desc": "AGRATE BRIANZA", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323165052, "tipo_tras": "SZ"}
 {"cod": "031040020", "desc": "AICURZIO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323162153, "tipo_tras": "SZ"}
 {"cod": "031040030", "desc": "ALBIATE", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323155120, "tipo_tras": "SZ"}
@@ -2733,7 +2733,7 @@
 {"cod": "031040090", "desc": "BIASSONO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323165052, "tipo_tras": "SZ"}
 {"cod": "031040100", "desc": "BOVISIO-MASCIAGO", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323175533, "tipo_tras": "SZ"}
 {"cod": "031040110", "desc": "BRIOSCO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323171317, "tipo_tras": "SZ"}
-{"cod": "031040120", "desc": "BRUGHERIO", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323183419, "tipo_tras": "SZ"}
+{"cod": "031040120", "desc": "BRUGHERIO", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323204351, "tipo_tras": "SZ"}
 {"cod": "031040130", "desc": "BURAGO DI MOLGORA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323155703, "tipo_tras": "SZ"}
 {"cod": "031040135", "desc": "BUSNAGO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323174106, "tipo_tras": "SZ"}
 {"cod": "031040140", "desc": "CAMPARADA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323170324, "tipo_tras": "SZ"}
@@ -3630,7 +3630,7 @@
 {"cod": "050901200", "desc": "ZERMEGHEDO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323172943, "tipo_tras": "SZ"}
 {"cod": "050901210", "desc": "ZOVENCEDO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323154115, "tipo_tras": "SZ"}
 {"cod": "050901220", "desc": "ZUGLIANO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323163846, "tipo_tras": "SZ"}
-{"cod": "060000000", "desc": "FRIULI-VENEZIA GIULIA", "tipo": "RE", "tipo_comune": null, "dt_agg": 20260323183558, "tipo_tras": null}
+{"cod": "060000000", "desc": "FRIULI-VENEZIA GIULIA", "tipo": "RE", "tipo_comune": null, "dt_agg": 20260323210556, "tipo_tras": null}
 {"cod": "060350000", "desc": "GORIZIA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323174018, "tipo_tras": null}
 {"cod": "060350010", "desc": "CAPRIVA DEL FRIULI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323171054, "tipo_tras": "SZ"}
 {"cod": "060350020", "desc": "CORMONS", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323163602, "tipo_tras": "SZ"}
@@ -3799,7 +3799,7 @@
 {"cod": "060920040", "desc": "SAN DORLIGO DELLA VALLE-DOLINA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323161120, "tipo_tras": "SZ"}
 {"cod": "060920050", "desc": "SGONICO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323172416, "tipo_tras": "SZ"}
 {"cod": "060920060", "desc": "TRIESTE", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323175758, "tipo_tras": "SZ"}
-{"cod": "060930000", "desc": "PORDENONE", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323181544, "tipo_tras": null}
+{"cod": "060930000", "desc": "PORDENONE", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323210556, "tipo_tras": null}
 {"cod": "060930010", "desc": "ANDREIS", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323161406, "tipo_tras": "SZ"}
 {"cod": "060930020", "desc": "ARBA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323164812, "tipo_tras": "SZ"}
 {"cod": "060930040", "desc": "AVIANO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323165411, "tipo_tras": "SZ"}
@@ -3809,7 +3809,7 @@
 {"cod": "060930080", "desc": "BUDOIA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323170105, "tipo_tras": "SZ"}
 {"cod": "060930090", "desc": "CANEVA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323170641, "tipo_tras": "SZ"}
 {"cod": "060930100", "desc": "CASARSA DELLA DELIZIA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323165141, "tipo_tras": "SZ"}
-{"cod": "060930110", "desc": "CASTELNOVO DEL FRIULI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323164135, "tipo_tras": "SZ"}
+{"cod": "060930110", "desc": "CASTELNOVO DEL FRIULI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323210556, "tipo_tras": "SZ"}
 {"cod": "060930120", "desc": "CAVASSO NUOVO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323160159, "tipo_tras": "SZ"}
 {"cod": "060930130", "desc": "CHIONS", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323162642, "tipo_tras": "SZ"}
 {"cod": "060930140", "desc": "CIMOLAIS", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323162448, "tipo_tras": "SZ"}
@@ -4429,7 +4429,7 @@
 {"cod": "081010183", "desc": "SASSOFELTRIO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323162318, "tipo_tras": "SZ"}
 {"cod": "081010185", "desc": "TALAMELLO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323162826, "tipo_tras": "SZ"}
 {"cod": "081010200", "desc": "VERUCCHIO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323165044, "tipo_tras": "SZ"}
-{"cod": "090000000", "desc": "TOSCANA", "tipo": "RE", "tipo_comune": null, "dt_agg": 20260323191337, "tipo_tras": null}
+{"cod": "090000000", "desc": "TOSCANA", "tipo": "RE", "tipo_comune": null, "dt_agg": 20260323222250, "tipo_tras": null}
 {"cod": "090050000", "desc": "AREZZO", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323191337, "tipo_tras": null}
 {"cod": "090050010", "desc": "ANGHIARI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323154850, "tipo_tras": "SZ"}
 {"cod": "090050020", "desc": "AREZZO", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323191337, "tipo_tras": "SZ"}
@@ -4610,7 +4610,7 @@
 {"cod": "090460150", "desc": "TRESANA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323161333, "tipo_tras": "SZ"}
 {"cod": "090460160", "desc": "VILLAFRANCA IN LUNIGIANA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323162225, "tipo_tras": "SZ"}
 {"cod": "090460170", "desc": "ZERI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323153923, "tipo_tras": "SZ"}
-{"cod": "090620000", "desc": "PISA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323171828, "tipo_tras": null}
+{"cod": "090620000", "desc": "PISA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323222250, "tipo_tras": null}
 {"cod": "090620020", "desc": "BIENTINA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323163210, "tipo_tras": "SZ"}
 {"cod": "090620030", "desc": "BUTI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323164652, "tipo_tras": "SZ"}
 {"cod": "090620040", "desc": "CALCI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323165111, "tipo_tras": "SZ"}
@@ -4634,7 +4634,7 @@
 {"cod": "090620221", "desc": "ORCIANO PISANO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323170034, "tipo_tras": "SZ"}
 {"cod": "090620230", "desc": "PALAIA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323163549, "tipo_tras": "SZ"}
 {"cod": "090620240", "desc": "PECCIOLI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323161355, "tipo_tras": "SZ"}
-{"cod": "090620250", "desc": "PISA", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323170115, "tipo_tras": "SZ"}
+{"cod": "090620250", "desc": "PISA", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323222250, "tipo_tras": "SZ"}
 {"cod": "090620260", "desc": "POMARANCE", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323163210, "tipo_tras": "SZ"}
 {"cod": "090620270", "desc": "PONSACCO", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323164211, "tipo_tras": "SZ"}
 {"cod": "090620280", "desc": "PONTEDERA", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323160647, "tipo_tras": "SZ"}
@@ -5039,7 +5039,7 @@
 {"cod": "111050380", "desc": "SERVIGLIANO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323170418, "tipo_tras": "SZ"}
 {"cod": "111050390", "desc": "SMERILLO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323154937, "tipo_tras": "SZ"}
 {"cod": "111050400", "desc": "TORRE SAN PATRIZIO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323165010, "tipo_tras": "SZ"}
-{"cod": "120000000", "desc": "LAZIO", "tipo": "RE", "tipo_comune": null, "dt_agg": 20260323194344, "tipo_tras": null}
+{"cod": "120000000", "desc": "LAZIO", "tipo": "RE", "tipo_comune": null, "dt_agg": 20260323202449, "tipo_tras": null}
 {"cod": "120330000", "desc": "FROSINONE", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323182541, "tipo_tras": null}
 {"cod": "120330010", "desc": "ACQUAFONDATA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323153511, "tipo_tras": "SZ"}
 {"cod": "120330020", "desc": "ACUTO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323164919, "tipo_tras": "SZ"}
@@ -5240,7 +5240,7 @@
 {"cod": "120690690", "desc": "TURANIA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323152757, "tipo_tras": "SZ"}
 {"cod": "120690700", "desc": "VACONE", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323153215, "tipo_tras": "SZ"}
 {"cod": "120690710", "desc": "VARCO SABINO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323152205, "tipo_tras": "SZ"}
-{"cod": "120700000", "desc": "ROMA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323194344, "tipo_tras": null}
+{"cod": "120700000", "desc": "ROMA", "tipo": "PR", "tipo_comune": null, "dt_agg": 20260323202449, "tipo_tras": null}
 {"cod": "120700010", "desc": "AFFILE", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323170542, "tipo_tras": "SZ"}
 {"cod": "120700020", "desc": "AGOSTA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323165022, "tipo_tras": "SZ"}
 {"cod": "120700030", "desc": "ALBANO LAZIALE", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323172752, "tipo_tras": "SZ"}
@@ -5337,7 +5337,7 @@
 {"cod": "120700870", "desc": "ROCCA PRIORA", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323170651, "tipo_tras": "SZ"}
 {"cod": "120700880", "desc": "ROCCA SANTO STEFANO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323160624, "tipo_tras": "SZ"}
 {"cod": "120700890", "desc": "ROIATE", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323155437, "tipo_tras": "SZ"}
-{"cod": "120700900", "desc": "ROMA", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323194344, "tipo_tras": "SZ"}
+{"cod": "120700900", "desc": "ROMA", "tipo": "CM", "tipo_comune": "M", "dt_agg": 20260323202449, "tipo_tras": "SZ"}
 {"cod": "120700910", "desc": "ROVIANO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323163508, "tipo_tras": "SZ"}
 {"cod": "120700920", "desc": "SACROFANO", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323180624, "tipo_tras": "SZ"}
 {"cod": "120700930", "desc": "SAMBUCI", "tipo": "CM", "tipo_comune": "N", "dt_agg": 20260323153354, "tipo_tras": "SZ"}
