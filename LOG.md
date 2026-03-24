@@ -1,5 +1,9 @@
 # LOG
 
+## 2026-03-24
+
+- Aggiunto `mappe/bivariate/bivariate_map.py`: mappa choropleth bivariata % Sì × % Affluenza, N classi configurabile (default quintili), filtro territoriale e palette personalizzabili
+
 ## 2026-03-23
 
 - Aggiunto flag `--estero` (off by default) per abilitare download dati estero: `enti_estero.jsonl`, `scrutini_estero.jsonl`, `scrutini_estero_flat.jsonl/csv`, `affluenza_estero.csv`
