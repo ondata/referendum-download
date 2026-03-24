@@ -283,3 +283,4 @@ Per la documentazione completa e le opzioni di personalizzazione (numero di clas
 
 - Raffaele Mastrolonardo, Sky TG24 — [Referendum sulla giustizia, la vittoria del No raccontata in 3 mappe](https://tg24.sky.it/politica/2026/03/23/referendum-giustizia-risultati-dati) (23 marzo 2026)
 - Raffaele Mastrolonardo, Sky TG24 — [Referendum sulla giustizia, l'affluenza raccontata in 3 grafici](https://tg24.sky.it/politica/2026/03/23/referendum-giustizia-affluenza-dati) (23 marzo 2026)
+- David Ruffini, Il Sole 24 Ore Infodata — [Scopri come è andato il referendum costituzionale: la mappa comune per comune](https://www.infodata.ilsole24ore.com/2026/03/24/referendum-giustizia-risultati-comuni-mappa-voto-italia/) (24 marzo 2026)
