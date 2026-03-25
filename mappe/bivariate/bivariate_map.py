@@ -142,10 +142,10 @@ legend_ax.annotate('', xy=(N + 0.4, N + 0.4), xytext=(0, 0), arrowprops=arrow_kw
 # freccia asse % Affluenza: vertice inferiore → vertice sinistro del diamante
 legend_ax.annotate('', xy=(-N - 0.4, N + 0.4), xytext=(0, 0), arrowprops=arrow_kw)
 
-legend_ax.text(N * 0.55, N * 0.55 - 1.1, '% Sì →', ha='center', va='center',
-               fontsize=7.5, color='#333333', fontweight='bold', rotation=-45)
-legend_ax.text(-N * 0.55, N * 0.55 - 1.1, '% Affluenza →', ha='center', va='center',
+legend_ax.text(N / 2 + 0.7, N / 2 - 0.7, '% Sì →', ha='center', va='center',
                fontsize=7.5, color='#333333', fontweight='bold', rotation=45)
+legend_ax.text(-N / 2 - 0.7, N / 2 - 0.7, '← % Affluenza', ha='center', va='center',
+               fontsize=7.5, color='#333333', fontweight='bold', rotation=-45)
 
 # ── Titolo e note ─────────────────────────────────────────────────────────────
 nomi_classi = {3: 'terzili', 4: 'quartili', 5: 'quintili'}
