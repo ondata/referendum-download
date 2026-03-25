@@ -5,7 +5,7 @@
 # ///
 """
 Bivariate choropleth: % Sì vs % Affluenza finale per comune - Referendum 2026
-Palette: interpolazione bilineare dagli angoli Stevens (teal × pink/violet)
+Palette: schema Trumbo (1981) rosso-viola-blu, legenda quadrato a 45°.
 
 Personalizzazione: vedi sezione "CONFIG" qui sotto.
 """
@@ -26,16 +26,16 @@ SCRUTINI = BASE / "data/20260322/scrutini_flat.csv"
 GEOJSON  = BASE / "tmp/Com01012026_g_WGS84.geojson"
 OUT      = pathlib.Path(__file__).parent / "bivariate_map.png"
 
-# Numero di classi per asse (es. 3=terzili, 4=quartili, 5=quintili)
-N = 5
+# Numero di classi per asse (3=terzili, max raccomandato da letteratura)
+N = 3
 
-# Colori ai 4 angoli della griglia (RGB). Modifica per cambiare palette.
+# Colori ai 4 angoli della griglia (RGB) – schema Trumbo (1981) rosso-viola-blu.
 # (si_basso, vot_basso) → (si_alto, vot_basso)
 # (si_basso, vot_alto)  → (si_alto, vot_alto)
-C00 = np.array([232, 232, 232])  # grigio chiaro
-C_N0 = np.array([90,  200, 200])  # teal
-C0_N = np.array([190, 100, 172])  # viola/rosa
-C_NN = np.array([59,   73, 148])  # blu scuro
+C00 = np.array([232, 232, 232])  # grigio neutro (basso-basso)
+C_N0 = np.array([200,  70,  70])  # rosso (% Sì alto, affluenza bassa)
+C0_N = np.array([ 70,  70, 200])  # blu (% Sì basso, affluenza alta)
+C_NN = np.array([ 80,  30, 110])  # viola scuro (entrambi alti)
 
 # Filtro territoriale: None = tutti i comuni
 # Esempi: COD_REG == 19 (Sicilia), COD_REG == 15 (Campania)
@@ -117,34 +117,35 @@ fig.patch.set_facecolor('white')
 
 gdf.plot(ax=ax, color=gdf['color'], linewidth=0.05, edgecolor='#aaaaaa')
 
-# ── Legenda N×N come inset ────────────────────────────────────────────────────
-legend_ax = fig.add_axes([0.08, 0.10, 0.13, 0.13])
+# ── Legenda quadrato a 45° (Trumbo 1981) ─────────────────────────────────────
+legend_ax = fig.add_axes([0.05, 0.07, 0.20, 0.20])
 legend_ax.set_aspect('equal')
 legend_ax.set_axis_off()
 
-cell = 1.0
 for i, col in enumerate(LABELS_SI):
     for j, row in enumerate(LABELS_VOT):
-        rect = mpatches.FancyBboxPatch(
-            (i * cell, j * cell), cell, cell,
-            boxstyle="square,pad=0",
+        cx = float(i - j)
+        cy = float(i + j + 1)
+        corners = [(cx, cy - 1), (cx + 1, cy), (cx, cy + 1), (cx - 1, cy)]
+        legend_ax.add_patch(mpatches.Polygon(
+            corners, closed=True,
             facecolor=COLORS[col + row],
-            edgecolor='white',
-            linewidth=0.5,
-        )
-        legend_ax.add_patch(rect)
+            edgecolor='white', linewidth=0.5))
 
-legend_ax.set_xlim(-0.1, N + 0.3)
-legend_ax.set_ylim(-0.5, N + 0.3)
+# coordinate space: x ∈ [-(N+1), N+1], y ∈ [-1.5, 2N+0.5] – range uguale per aspect='equal'
+legend_ax.set_xlim(-(N + 1), N + 1)
+legend_ax.set_ylim(-1.5, 2 * N + 0.5)
 
 arrow_kw = dict(arrowstyle='->', color='#333333', lw=1.2)
-legend_ax.annotate('', xy=(N + 0.2, -0.15), xytext=(-0.1, -0.15), arrowprops=arrow_kw)
-legend_ax.annotate('', xy=(-0.15, N + 0.2), xytext=(-0.15, -0.1), arrowprops=arrow_kw)
+# freccia asse % Sì: vertice inferiore → vertice destro del diamante
+legend_ax.annotate('', xy=(N + 0.4, N + 0.4), xytext=(0, 0), arrowprops=arrow_kw)
+# freccia asse % Affluenza: vertice inferiore → vertice sinistro del diamante
+legend_ax.annotate('', xy=(-N - 0.4, N + 0.4), xytext=(0, 0), arrowprops=arrow_kw)
 
-legend_ax.text(N / 2, -0.4, '% Sì →', ha='center', va='top',
-               fontsize=7.5, color='#333333', fontweight='bold')
-legend_ax.text(-0.35, N / 2, '% Affluenza →', ha='right', va='center',
-               fontsize=7.5, color='#333333', fontweight='bold', rotation=90)
+legend_ax.text(N * 0.55, N * 0.55 - 1.1, '% Sì →', ha='center', va='center',
+               fontsize=7.5, color='#333333', fontweight='bold', rotation=-45)
+legend_ax.text(-N * 0.55, N * 0.55 - 1.1, '% Affluenza →', ha='center', va='center',
+               fontsize=7.5, color='#333333', fontweight='bold', rotation=45)
 
 # ── Titolo e note ─────────────────────────────────────────────────────────────
 nomi_classi = {3: 'terzili', 4: 'quartili', 5: 'quintili'}
