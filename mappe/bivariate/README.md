@@ -1,21 +1,46 @@
 # Mappa bivariata: % Sì × % Affluenza
 
-Mappa choropleth bivariata per comune che incrocia due variabili:
+Mappe choropleth bivariate per comune che incrociano due variabili:
 
 - **Asse X**: % voti Sì sul totale dei voti validi (`perc_si`)
 - **Asse Y**: % votanti sul totale degli elettori registrati (`perc_vot`)
 
-La palette è generata per interpolazione bilineare tra 4 colori angolari (ispirata allo schema Stevens teal × pink/violet).
+## Script disponibili
 
-## Requisiti
+| Script | Schema colori | Classi | Output |
+|--------|--------------|--------|--------|
+| `bivariate_map.py` | Trumbo (1981) rosso–viola–blu, legenda a 45° | 3×3 (terzili) | `bivariate_map.png` |
+| `bivariate_map_si50.py` | Calda/fredda con soglia semantica al 50% | 4×3 (% Sì con breaks fissi; terzili affluenza) | `bivariate_map_si50.png` |
+| `bivariate_map_simone.py` | HSL lightness×hue (corallo→viola→blu) | 3×3 (terzili) | `bivariate_map_simone.png` |
+
+### `bivariate_map.py`
+
+Schema colori Trumbo (1981): interpolazione bilineare tra 4 angoli rosso–viola–blu.
+Legenda a quadrato ruotato 45° con frecce sugli assi.
+
+### `bivariate_map_si50.py`
+
+Soglia semantica al 50% per % Sì: classi `<40%`, `40–50%` (No), `50–60%`, `>60%` (Sì).
+Palette calda (arancio) per la zona No, fredda (blu) per la zona Sì.
+Linea divisoria No/Sì visibile in legenda.
+
+### `bivariate_map_simone.py`
+
+Schema HSL "lightness × hue":
+- **hue**: varia con % Sì, da rosso/corallo (+No) → viola (centro) → blu (+Sì)
+- **lightness**: varia con l'affluenza, da chiaro (bassa) → scuro (alta)
+
+## Utilizzo
 
 ```bash
 uv run bivariate_map.py
+uv run bivariate_map_si50.py
+uv run bivariate_map_simone.py
 ```
 
 Dipendenze gestite automaticamente via inline metadata PEP 723 (`geopandas`, `pandas`, `matplotlib`, `duckdb`, `numpy`).
 
-### File necessari
+## File necessari
 
 | File | Descrizione |
 |------|-------------|
@@ -24,26 +49,15 @@ Dipendenze gestite automaticamente via inline metadata PEP 723 (`geopandas`, `pa
 
 ## Personalizzazione
 
-Tutte le opzioni si trovano nella sezione **CONFIG** all'inizio dello script.
-
-### Numero di classi
-
-```python
-N = 5   # quintili (default)
-N = 4   # quartili
-N = 3   # terzili
-```
+Tutte le opzioni si trovano nella sezione **CONFIG** di ciascuno script.
 
 ### Filtro territoriale
 
 Per produrre una mappa di una sola regione, imposta entrambi i filtri:
 
 ```python
-# Filtra il GeoJSON (usa i campi del file ISTAT)
-FILTRO_GEOJSON = "COD_REG == 19"   # Sicilia
-
-# Filtra i dati scrutini (SQL WHERE clause, senza AND iniziale)
-FILTRO_SCRUTINI = "cod_reg = '19'"
+FILTRO_GEOJSON  = "COD_REG == 19"   # Sicilia (campo GeoJSON ISTAT)
+FILTRO_SCRUTINI = "cod_reg = '19'"  # Sicilia (SQL WHERE, senza AND iniziale)
 ```
 
 Codici regione ISTAT:
@@ -61,31 +75,8 @@ Codici regione ISTAT:
 | 9 | Toscana | 19 | Sicilia |
 | 10 | Umbria | 20 | Sardegna |
 
-### Palette colori
-
-Modifica i 4 angoli della griglia (valori RGB):
-
-```python
-C00  = np.array([232, 232, 232])  # si_basso × vot_basso  → grigio chiaro
-C_N0 = np.array([90,  200, 200])  # si_alto  × vot_basso  → teal
-C0_N = np.array([190, 100, 172])  # si_basso × vot_alto   → viola/rosa
-C_NN = np.array([59,   73, 148])  # si_alto  × vot_alto   → blu scuro
-```
-
-Tutti i 25 (o 9/16) colori intermedi vengono calcolati automaticamente per interpolazione.
-
 ### Titolo personalizzato
 
 ```python
-TITOLO = "Il mio titolo personalizzato"
+TITOLO = "Il mio titolo personalizzato"  # None = generato automaticamente
 ```
-
-Se `None`, il titolo viene generato automaticamente con il numero di classi.
-
-### File di output
-
-```python
-OUT = pathlib.Path(__file__).parent / "bivariate_map.png"
-```
-
-Il file viene salvato nella stessa directory dello script. Cambia il percorso se necessario.
