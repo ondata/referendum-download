@@ -29,8 +29,8 @@ OUT      = pathlib.Path(__file__).parent / "bivariate_map_si50.png"
 N_SI      = 4
 BREAKS_SI = [0, 40, 50, 60, 100]
 
-# Classi % Affluenza: quartili
-N_VOT = 4
+# Classi % Affluenza: terzili
+N_VOT = 3
 
 # Palette "No" (i=0..1, % Sì < 50%): toni caldi arancio
 C_NO_00 = np.array([255, 185, 100])  # arancio chiaro (basso si, bassa affl)
@@ -154,7 +154,7 @@ legend_ax.text(-0.35, N_VOT / 2, '% Affluenza →', ha='right', va='center',
 # ── Titolo e note ─────────────────────────────────────────────────────────────
 titolo = TITOLO or (
     'Referendum 2026 – Bivariata: % Sì × % Affluenza finale\n'
-    'per comune (% Sì: soglia 50%; affluenza: quartili)'
+    'per comune (% Sì: soglia 50%; affluenza: terzili)'
 )
 ax.set_title(titolo, fontsize=14, fontweight='bold', pad=16, color='#222222')
 
