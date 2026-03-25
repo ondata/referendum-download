@@ -52,8 +52,8 @@ C_SI_10 = np.array([ 70, 130, 220])  # blu (alto si, bassa affl)
 C_SI_01 = np.array([140, 155, 200])  # grigio-blu scuro (basso si Sì, alta affl)
 C_SI_11 = np.array([ 20,  40, 140])  # blu scuro/viola (alto si, alta affl)
 
-FILTRO_GEOJSON  = f"COD_REG == {_args.regione}" if _args.regione else None
-FILTRO_SCRUTINI = f"cod_reg = '{_args.regione}'" if _args.regione else None
+FILTRO_GEOJSON  = f"COD_REG == {int(_args.regione)}" if _args.regione else None
+FILTRO_SCRUTINI = f"cod_reg = '{int(_args.regione):02d}'" if _args.regione else None
 TITOLO = None
 
 # ── FINE CONFIG ───────────────────────────────────────────────────────────────
@@ -98,7 +98,8 @@ df = con.execute(f"""
 """).df()
 
 df['q_si']  = pd.cut(df['perc_si'], bins=BREAKS_SI, labels=LABELS_SI, include_lowest=True)
-df['q_vot'] = pd.qcut(df['perc_vot'], q=N_VOT, labels=LABELS_VOT, duplicates='drop')
+_vot_cuts, _vot_bins = pd.qcut(df['perc_vot'], q=N_VOT, retbins=True, duplicates='drop')
+df['q_vot'] = pd.qcut(df['perc_vot'], q=N_VOT, labels=LABELS_VOT[:len(_vot_bins)-1], duplicates='drop')
 df['bivar'] = df['q_si'].astype(str) + df['q_vot'].astype(str)
 df['color'] = df['bivar'].map(COLORS)
 
