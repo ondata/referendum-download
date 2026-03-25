@@ -10,6 +10,7 @@ Bivariate choropleth: % Sì vs % Affluenza finale per comune - Referendum 2026
 Palette: schema Trumbo (1981) rosso-viola-blu, legenda parallelogramma a 45°.
 """
 
+import argparse
 import geopandas as gpd
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -18,12 +19,19 @@ import duckdb
 import numpy as np
 import pathlib
 
+# ── ARGS ──────────────────────────────────────────────────────────────────────
+
+_parser = argparse.ArgumentParser()
+_parser.add_argument('--regione', type=str, default=None, help='Codice ISTAT regione (es. 19)')
+_parser.add_argument('--output',  type=str, default=None, help='Percorso file PNG output')
+_args = _parser.parse_args()
+
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 
 BASE     = pathlib.Path(__file__).parent.parent.parent
 SCRUTINI = BASE / "data/20260322/scrutini_flat.csv"
 GEOJSON  = BASE / "tmp/Com01012026_g_WGS84.geojson"
-OUT      = pathlib.Path(__file__).parent / "bivariate_map_si50.png"
+OUT      = pathlib.Path(_args.output) if _args.output else pathlib.Path(__file__).parent / "bivariate_map_si50.png"
 
 # Classi % Sì: breaks semantici con soglia al 50%
 N_SI      = 4
@@ -44,8 +52,8 @@ C_SI_10 = np.array([ 70, 130, 220])  # blu (alto si, bassa affl)
 C_SI_01 = np.array([140, 155, 200])  # grigio-blu scuro (basso si Sì, alta affl)
 C_SI_11 = np.array([ 20,  40, 140])  # blu scuro/viola (alto si, alta affl)
 
-FILTRO_GEOJSON  = None
-FILTRO_SCRUTINI = None
+FILTRO_GEOJSON  = f"COD_REG == {_args.regione}" if _args.regione else None
+FILTRO_SCRUTINI = f"cod_reg = '{_args.regione}'" if _args.regione else None
 TITOLO = None
 
 # ── FINE CONFIG ───────────────────────────────────────────────────────────────
@@ -160,10 +168,10 @@ ax.set_title(titolo, fontsize=14, fontweight='bold', pad=16, color='#222222')
 
 si_str  = '  '.join(f'[{BREAKS_SI[k]}–{BREAKS_SI[k+1]}]' for k in range(N_SI))
 vot_str = '  '.join(f'[{breaks_vot[k]}–{breaks_vot[k+1]}]' for k in range(N_VOT))
-fig.text(0.08, 0.04,
+fig.text(0.05, 0.12,
          f"% Sì:        {si_str}\n"
          f"% Affluenza: {vot_str}",
-         fontsize=7, color='#555555', family='monospace')
+         fontsize=14, color='#555555', family='monospace')
 
 fig.text(0.92, 0.04, 'Fonte: Eligendo / ISTAT', ha='right',
          fontsize=8, color='#888888')
