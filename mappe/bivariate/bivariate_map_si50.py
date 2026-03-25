@@ -29,14 +29,14 @@ OUT      = pathlib.Path(__file__).parent / "bivariate_map_si50.png"
 N_SI      = 4
 BREAKS_SI = [0, 40, 50, 60, 100]
 
-# Classi % Affluenza: terzili
-N_VOT = 3
+# Classi % Affluenza: quartili
+N_VOT = 4
 
-# Palette "No" (i=0..1, % Sì < 50%): toni caldi giallo/arancio
-C_NO_00 = np.array([235, 230, 215])  # grigio caldo (basso si, bassa affl)
-C_NO_10 = np.array([255, 165,  50])  # arancio (alto si No, bassa affl)
-C_NO_01 = np.array([185, 165, 110])  # grigio scuro caldo (basso si, alta affl)
-C_NO_11 = np.array([200,  90,  15])  # arancio scuro (alto si No, alta affl)
+# Palette "No" (i=0..1, % Sì < 50%): toni caldi arancio
+C_NO_00 = np.array([255, 185, 100])  # arancio chiaro (basso si, bassa affl)
+C_NO_10 = np.array([240, 120,  25])  # arancio forte (alto si No, bassa affl)
+C_NO_01 = np.array([220, 135,  55])  # arancio medio (basso si, alta affl)
+C_NO_11 = np.array([190,  70,   5])  # arancio scuro (alto si No, alta affl)
 
 # Palette "Sì" (i=2..3, % Sì >= 50%): toni freddi blu
 C_SI_00 = np.array([215, 228, 245])  # grigio freddo (basso si Sì, bassa affl)
@@ -57,8 +57,8 @@ LABELS_VOT = [str(i + 1)  for i in range(N_VOT)]  # 1, 2, 3
 def bilinear(i, j):
     """Interpolazione bilineare separata per zona No (i<2) e Sì (i>=2)."""
     s = j / (N_VOT - 1)
-    if i < 2:  # zona No
-        t = i / 1.0
+    if i < 2:  # zona No – invertito: scuri fuori, chiari al centro (vicino al 50%)
+        t = 1.0 - i
         C00, C10, C01, C11 = C_NO_00, C_NO_10, C_NO_01, C_NO_11
     else:      # zona Sì
         t = (i - 2) / 1.0
@@ -116,57 +116,51 @@ fig.patch.set_facecolor('white')
 
 gdf.plot(ax=ax, color=gdf['color'], linewidth=0.05, edgecolor='#aaaaaa')
 
-# ── Legenda 45° (parallelogramma N_SI × N_VOT) ────────────────────────────────
-legend_ax = fig.add_axes([0.04, 0.06, 0.25, 0.25])
+# ── Legenda griglia N_SI × N_VOT ──────────────────────────────────────────────
+legend_ax = fig.add_axes([0.05, 0.15, 0.18, 0.18])
 legend_ax.set_aspect('equal')
 legend_ax.set_axis_off()
 
+cell = 1.0
 for i, col in enumerate(LABELS_SI):
     for j, row in enumerate(LABELS_VOT):
-        cx = float(i - j)
-        cy = float(i + j + 1)
-        corners = [(cx, cy - 1), (cx + 1, cy), (cx, cy + 1), (cx - 1, cy)]
-        legend_ax.add_patch(mpatches.Polygon(
-            corners, closed=True,
+        legend_ax.add_patch(mpatches.FancyBboxPatch(
+            (i * cell, j * cell), cell, cell,
+            boxstyle="square,pad=0",
             facecolor=COLORS[col + row],
             edgecolor='white', linewidth=0.5))
 
-# Linea nera divisoria No/Sì al 50% (bordo tra i=1 e i=2)
-# Punti condivisi: (2-j, 2+j) → (1-j, 3+j) per j=0..N_VOT-1
-x_div = [2, 2 - (N_VOT - 1) - 1]   # da (2,2) a (-1,5) per N_VOT=3
-y_div = [2, 2 + (N_VOT - 1) + 1]
-legend_ax.plot(x_div, y_div, color='black', linewidth=2,
-               solid_capstyle='round', zorder=5)
+# Linea verticale divisoria No/Sì tra i=1 e i=2
+legend_ax.plot([2, 2], [0, N_VOT], color='black', linewidth=2, zorder=5)
 
-# Etichette No/Sì sui due lati della linea
-legend_ax.text(-0.5, 2.5, 'No', ha='center', va='center',
+# Etichette No/Sì
+legend_ax.text(1.0, N_VOT / 2, 'No', ha='center', va='center',
                fontsize=9, color='white', fontweight='bold', zorder=6)
-legend_ax.text(1.5, 4.5, 'Sì', ha='center', va='center',
+legend_ax.text(3.0, N_VOT / 2, 'Sì', ha='center', va='center',
                fontsize=9, color='white', fontweight='bold', zorder=6)
 
-# range uguale su x e y per aspect='equal'
-legend_ax.set_xlim(-N_VOT - 1, N_SI + 1)           # range = N_SI + N_VOT + 2 = 9
-legend_ax.set_ylim(-1.5, N_SI + N_VOT + 0.5)       # range = 9
+legend_ax.set_xlim(-0.1, N_SI + 0.3)
+legend_ax.set_ylim(-0.5, N_VOT + 0.3)
 
 arrow_kw = dict(arrowstyle='->', color='#333333', lw=1.2)
-legend_ax.annotate('', xy=(N_SI + 0.4, N_SI + 0.4), xytext=(0, 0), arrowprops=arrow_kw)
-legend_ax.annotate('', xy=(-N_VOT - 0.4, N_VOT + 0.4), xytext=(0, 0), arrowprops=arrow_kw)
+legend_ax.annotate('', xy=(N_SI + 0.2, -0.15), xytext=(-0.1, -0.15), arrowprops=arrow_kw)
+legend_ax.annotate('', xy=(-0.15, N_VOT + 0.2), xytext=(-0.15, -0.1), arrowprops=arrow_kw)
 
-legend_ax.text(N_SI / 2 + 0.7, N_SI / 2 - 0.7, '% Sì →', ha='center', va='center',
-               fontsize=7.5, color='#333333', fontweight='bold', rotation=45)
-legend_ax.text(-N_VOT / 2 - 0.7, N_VOT / 2 - 0.7, '← % Affluenza', ha='center', va='center',
-               fontsize=7.5, color='#333333', fontweight='bold', rotation=-45)
+legend_ax.text(N_SI / 2, -0.4, '% Sì →', ha='center', va='top',
+               fontsize=7.5, color='#333333', fontweight='bold')
+legend_ax.text(-0.35, N_VOT / 2, '% Affluenza →', ha='right', va='center',
+               fontsize=7.5, color='#333333', fontweight='bold', rotation=90)
 
 # ── Titolo e note ─────────────────────────────────────────────────────────────
 titolo = TITOLO or (
     'Referendum 2026 – Bivariata: % Sì × % Affluenza finale\n'
-    'per comune (% Sì: soglia 50%; affluenza: terzili)'
+    'per comune (% Sì: soglia 50%; affluenza: quartili)'
 )
 ax.set_title(titolo, fontsize=14, fontweight='bold', pad=16, color='#222222')
 
 si_str  = '  '.join(f'[{BREAKS_SI[k]}–{BREAKS_SI[k+1]}]' for k in range(N_SI))
 vot_str = '  '.join(f'[{breaks_vot[k]}–{breaks_vot[k+1]}]' for k in range(N_VOT))
-fig.text(0.08, 0.07,
+fig.text(0.08, 0.04,
          f"% Sì:        {si_str}\n"
          f"% Affluenza: {vot_str}",
          fontsize=7, color='#555555', family='monospace')
