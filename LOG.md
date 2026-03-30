@@ -1,5 +1,9 @@
 # LOG
 
+## 2026-03-30
+
+- README: aggiunge Davide Ruffini (Infodata, mappa No/Sì per comune) a chi ha usato i dati
+
 ## 2026-03-24
 
 - Aggiunto `mappe/bivariate/bivariate_map.py`: mappa choropleth bivariata % Sì × % Affluenza, N classi configurabile (default quintili), filtro territoriale e palette personalizzabili
